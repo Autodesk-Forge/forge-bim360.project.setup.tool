@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{53655EB7-B32C-4186-AAFB-F43271B9223E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Autodesk.Forge.BIM360</RootNamespace>
+    <AssemblyName>Autodesk.Forge.BIM360</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>2</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autodesk.Forge, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autodesk.Forge.1.7.0\lib\net452\Autodesk.Forge.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.6.3\lib\net45\NLog.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RestSharp, Version=106.6.9.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.6.9\lib\net452\RestSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ForgeBimApiWrappers\Authentication.cs" />
+    <Compile Include="ForgeBimApiWrappers\AccountApi.cs" />
+    <Compile Include="ForgeBimApiWrappers\BimProjectFoldersApi.cs" />
+    <Compile Include="ForgeBimApiWrappers\HubsApi.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ForgeBimApiWrappers\BimProjectApi.cs" />
+    <Compile Include="ForgeBimApiWrappers\ForgeApi.cs" />
+    <Compile Include="Serialization\AboutMe.cs" />
+    <Compile Include="Serialization\Attributes.cs" />
+    <Compile Include="Serialization\Base.cs" />
+    <Compile Include="Serialization\BimCompany.cs" />
+    <Compile Include="Serialization\BimProject.cs" />
+    <Compile Include="Serialization\Bucket.cs" />
+    <Compile Include="Serialization\Buckets.cs" />
+    <Compile Include="Serialization\BusinessUnit.cs" />
+    <Compile Include="Serialization\Container.cs" />
+    <Compile Include="Serialization\Created.cs" />
+    <Compile Include="Serialization\Data.cs" />
+    <Compile Include="Serialization\Derivatives.cs" />
+    <Compile Include="Serialization\DMError.cs" />
+    <Compile Include="Serialization\DownloadedFormats.cs" />
+    <Compile Include="Serialization\Extension.cs" />
+    <Compile Include="Serialization\File.cs" />
+    <Compile Include="Serialization\FileType.cs" />
+    <Compile Include="Serialization\Folder.cs" />
+    <Compile Include="Serialization\HqUser.cs" />
+    <Compile Include="Serialization\HqUserResponse.cs" />
+    <Compile Include="Serialization\Hub.cs" />
+    <Compile Include="Serialization\Included.cs" />
+    <Compile Include="Serialization\IndustryRole.cs" />
+    <Compile Include="Serialization\Item.cs" />
+    <Compile Include="Serialization\ItemResponse.cs" />
+    <Compile Include="Serialization\JsonApi.cs" />
+    <Compile Include="Serialization\JsonApiResponse.cs" />
+    <Compile Include="Serialization\Link.cs" />
+    <Compile Include="Serialization\Links.cs" />
+    <Compile Include="Serialization\Meta.cs" />
+    <Compile Include="Serialization\NestedFolder.cs" />
+    <Compile Include="Serialization\Parent.cs" />
+    <Compile Include="Serialization\Permission.cs" />
+    <Compile Include="Serialization\Phone.cs" />
+    <Compile Include="Serialization\Project.cs" />
+    <Compile Include="Serialization\Projects.cs" />
+    <Compile Include="Serialization\ProjectUser.cs" />
+    <Compile Include="Serialization\ProjectUserResponse.cs" />
+    <Compile Include="Serialization\Refs.cs" />
+    <Compile Include="Serialization\Related.cs" />
+    <Compile Include="Serialization\Relationships.cs" />
+    <Compile Include="Serialization\Resources.cs" />
+    <Compile Include="Serialization\ResponseContent.cs" />
+    <Compile Include="Serialization\ResponseStats.cs" />
+    <Compile Include="Serialization\RootFolder.cs" />
+    <Compile Include="Serialization\Schema.cs" />
+    <Compile Include="Serialization\Self.cs" />
+    <Compile Include="Serialization\ServiceActivationBase.cs" />
+    <Compile Include="Serialization\ServiceActivationResponse.cs" />
+    <Compile Include="Serialization\Services.cs" />
+    <Compile Include="Serialization\ServiceActivation.cs" />
+    <Compile Include="Serialization\Storage.cs" />
+    <Compile Include="Serialization\Target.cs" />
+    <Compile Include="Serialization\Thumbnails.cs" />
+    <Compile Include="Serialization\Tip.cs" />
+    <Compile Include="Serialization\FolderResponse.cs" />
+    <Compile Include="Serialization\UserBase.cs" />
+    <Compile Include="Serialization\Version.cs" />
+    <Compile Include="Serialization\VersionExportManifest.cs" />
+    <Compile Include="Serialization\VersionExportRequest.cs" />
+    <Compile Include="Serialization\VersionExportResult.cs" />
+    <Compile Include="Serialization\Versions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
