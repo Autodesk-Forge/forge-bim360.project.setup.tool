@@ -107,9 +107,6 @@ Autodesk.BimProjectSetup.exe -u ".\sample\BIM360_ProjectUser_Template.csv" -c "<
 
 This sample is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT). Please see the [LICENSE](LICENSE.md) file for full details.
 
-# Contributions
-
-Read our contribution guidelines here: [CONTRIBUTE.md](CONTRIBUTE.md)
 
 # Written by
 - Oliver Scharpf, Global Consulting Delivery team, Autodessk.
