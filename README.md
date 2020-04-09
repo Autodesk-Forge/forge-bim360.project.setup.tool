@@ -75,10 +75,10 @@ Autodesk.BimProjectSetup.exe -u ".\sample\BIM360_ProjectUser_Template.csv" -c "<
     - --EU Use the EU region account
 
 # Packages 3rd party libraries used
-- The app use [NuGet](https://api.nuget.org/v3/index.json) to manage all the packages.
-- The [Autodesk.Forge](https://www.nuget.org/packages/Autodesk.Forge/) packages is included by default. The following 3rd party open source packages are used
-- [Newtonsoft.Json](https://www.newtonsoft.com/json),
-- [NLog](https://nlog-project.org/),
+- The app use [NuGet](https://api.nuget.org/v3/index.json) to manage all the packages
+- The [Autodesk.Forge](https://www.nuget.org/packages/Autodesk.Forge/) packages is included by default
+- [Newtonsoft.Json](https://www.newtonsoft.com/json)
+- [NLog](https://nlog-project.org/)
 - [RestSharp](http://restsharp.org/)
 
 
@@ -93,7 +93,7 @@ Autodesk.BimProjectSetup.exe -u ".\sample\BIM360_ProjectUser_Template.csv" -c "<
     1. Make sure that Excel does not alter the date formatting to the System format on the machine which the file is edited. By default the dd/MM/YYYY is used in the CSV to format the date. When the Windows system uses a different time/date format, this sometimes causes Excel to save the date to the default Windows system format. This format can be changed in Configuration Panel | Regional Settings
     2. Make sure the .CSV file is formatted in UTF-8 code.
     3. Open the file in a text editor such as Notepad++ after it was saved to ensure the above two points.
-- Logging can be configured in the Nlog.config file. Further information can be found here: https://github.com/nlog/NLog/wiki/Configuration-file
+- Logging can be configured in the Nlog.config file. Further information can be found here: https://github.com/nlog/NLog/wiki/Configuration-file.
 
 
 
