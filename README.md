@@ -22,6 +22,10 @@ Command line tool to setup BIM 360 projects, services, users, it includes the fo
 ![features](./UseCases.png)
 
 
+# Thumbnail
+![thumbnail](/thumbnail.png)
+
+
 # Prerequisites
 - Visual Studio: Either Community (Windows) or Code (Windows, MacOS).
 - CefSharp: Chromium based browser control for .NET apps
