@@ -1,6 +1,2 @@
-name;start_date;end_date;project_type;value;currency;job_number;address_line_1;address_line_2;city;state_or_province;postal_code;country;business_unit_id;timezone;language;construction_type;contract_type
-Sample project 1;05/21/2019;05/25/2019;Office;0;USD;;;;;;;United States;;America/New_York;en;New Construction;Design-Bid-Build
-Sample project 2;05/21/2019;05/25/2019;Office;0;USD;;;;;;;United States;;America/New_York;en;New Construction;Design-Bid-Build
-Sample project 3;05/21/2019;05/25/2019;Office;0;USD;;;;;;;United States;;America/New_York;en;New Construction;Design-Bid-Build
-Sample project 4;05/21/2019;05/25/2019;Office;0;USD;;;;;;;United States;;America/New_York;en;New Construction;Design-Bid-Build
-Sample project 5;05/21/2019;05/25/2019;Office;0;USD;;;;;;;United States;;America/New_York;en;New Construction;Design-Bid-Build
+name;start_date;end_date;project_type;value;currency;job_number;address_line_1;address_line_2;city;state_or_province;postal_code;country;business_unit_id;timezone;language;construction_type;contract_type;folders_created_from
+Setup Tool Test project 1;05/21/2019;05/25/2019;Office;0;USD;;;;;;;United States;;America/New_York;en;New Construction;Design-Bid-Build;project_for_copy_folder

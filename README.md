@@ -15,23 +15,17 @@
 # Description
 Command line tool to setup BIM 360 projects, services, users, it includes the following functionalities:
 - Create Projects in Batch
-- Copy Projects with Folders (only **Plan** and **Project File** folder, no permission copy) from a template project
+- Copy Projects with Folders from a template project
 - Activate Services by Adding User as Admin
 - Add Users to Project as Admin or User
 
-![features](./UseCases.png)
-
-
 # Thumbnail
 ![thumbnail](/thumbnail.png)
-
 
 # Prerequisites
 - Visual Studio: Either Community (Windows) or Code (Windows, MacOS).
 - CefSharp: Chromium based browser control for .NET apps
 - .NET Framework basic knowledge with C#
-
-
 
 # Running locally
 
@@ -42,6 +36,8 @@ Connect your Forge App to a Specific BIM 360 Account, follow the [tutorial](http
 Download the repository, open `BimProjectSetupTool.sln` Solution on Visual Studio. The build process should download the required packages (**Autodesk.Forge** and dependencies). Compile and build the project, run it, please check the [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for all the details about usage and preparation of csv files.
 
 # Features
+![features](./UseCases.png)
+
 This sample app includes a few features as detailed in [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf), in short, please follow the scripts to create projects, activate services, then add project users.
 
 Always replace the capitalized content in braces with your values before executing the script:
@@ -112,7 +108,7 @@ Note: These template files used in the scripts are just samples which are define
 
 
 # Limitation
-- CSV files need to be prepared with the correct format and required parameters.
+- CSV files need to be prepared with the correct format and required parameters, check [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for details.
 - From the services listed in  [service_type parameters documentation](https://forge.autodesk.com/en/docs/bim360/v1/overview/parameters/) only the following can be activated by this tool: **doc_manager**, **field**, **glue**. The parameter values field and glue are used for the **'classic'** products, not for the next gen products
 - Copy folder can't copy permissions with this tool.
 - **Copy Folder** only support **Plan** and **Project File** folder and their subfolders.
