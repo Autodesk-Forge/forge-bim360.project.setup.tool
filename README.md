@@ -26,37 +26,43 @@ Command line tool to setup BIM 360 projects, services, users, it includes the fo
 - Visual Studio: Either Community (Windows) or Code (Windows, MacOS).
 - CefSharp: Chromium based browser control for .NET apps
 - .NET Framework basic knowledge with C#
-- Register your **Forge App** and connect your Forge App to a Specific BIM 360 Account, follow the [tutorial](https://forge.autodesk.com/en/docs/bim360/v1/tutorials/getting-started/get-access-to-account/)
 
-# Download
-Download the [Project Setup Tool](download/BIM360-ProjectSetupTool.zip)
 
-# Using the app
-Build or download the tool. Please check the [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for all the details about usage and preparation of csv files. Follow the scripts step by step to create projects, activate services, then add project users.
 
-## Please follow the scripts to execute the tool:
+# Running locally
+
+For using this sample, you need an Autodesk developer credentials. Visit the [Forge Developer Portal](https://developer.autodesk.com), sign up for an account, then [create an app](https://developer.autodesk.com/myapps/create). 
+
+Connect your Forge App to a Specific BIM 360 Account, follow the [tutorial](https://forge.autodesk.com/en/docs/bim360/v1/tutorials/getting-started/get-access-to-account/)
+
+Download the repository, open `BimProjectSetupTool.sln` Solution on Visual Studio. The build process should download the required packages (**Autodesk.Forge** and dependencies). Compile and build the project, run it, please check the [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for all the details about usage and preparation of csv files.
+
+# Features
+This sample app includes a few features as detailed in [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf), in short, please follow the scripts to create projects, activate services, then add project users.
+
 Always replace the capitalized content in braces with your values before executing the script:
  ```powershell
  "<YOUR-CLIENT-ID>" - e.g. "LI8CLkyS4zO4OIvRPW2nPzR2UHk0zU7"
  etc.
  ```
-1. Create BIM360 projects:
+
+## Create BIM360 projects:
  ```powershell
 Autodesk.BimProjectSetup.exe -p ".\sample\BIM360_Projects_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin.account@yourcompany.com"
 ```
--  if you want to create project with folders, please add --CF as follow:
+If you want to create project with folders, please add --CF as follow:
  ```powershell
 Autodesk.BimProjectSetup.exe -p ".\sample\BIM360_Projects_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin.account@yourcompany.com" --CF
 ```
-2. Activate Services by Adding User as Admin
+## Activate Services by Adding User as Admin
  ```powershell
 Autodesk.BimProjectSetup.exe -s ".\sample\BIM360_Service_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin.account@yourcompany.com"
 ```
-3. Add Users to Project as Admin or User
+## Add Users to Project as Admin or User
  ```powershell
 Autodesk.BimProjectSetup.exe -u ".\sample\BIM360_ProjectUser_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin.account@yourcompany.com"
 ```
-Note: These template files are just samples which are defined in the spreadsheet structure for you to reference, all required fields must be filled in order for the tool to work properly, please refer the [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for the details.
+Note: These template files used in the scripts are just samples which are defined in the spreadsheet structure for you to reference, all required fields must be filled in order for the tool to work properly, please refer the [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for the details.
 
 
 ## Command Line Options
