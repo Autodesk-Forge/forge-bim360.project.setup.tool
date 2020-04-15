@@ -20,7 +20,7 @@ Command line tool to setup BIM 360 projects, services, users, it includes the fo
 - Add Users to Project as Admin or User
 
 # Thumbnail
-![thumbnail](/thumbnail.png)
+![thumbnail](/thumbnail.gif)
 
 # Prerequisites
 - Visual Studio: Either Community (Windows) or Code (Windows, MacOS).
