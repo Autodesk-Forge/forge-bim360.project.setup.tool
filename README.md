@@ -116,5 +116,5 @@ This sample is licensed under the terms of the [MIT License](http://opensource.o
 
 
 # Written by
-- Oliver Scharpf, Global Consulting Delivery team, Autodessk.
+- Oliver Scharpf, Global Consulting Delivery team, Autodesk.
 - Reviewed and maintained by Zhong Wu [@johnonsoftware](https://twitter.com/johnonsoftware), [Forge Partner Development](http://forge.autodesk.com)
