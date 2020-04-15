@@ -2,6 +2,7 @@
 
 ![Platforms](https://img.shields.io/badge/platform-Windows-lightgray.svg)
 ![.NET](https://img.shields.io/badge/.NET-4.6-blue.svg)
+[![CefSharp](https://img.shields.io/badge/CefSharp-57.0.0-blue.svg)](http://opensource.org/licenses/MIT)
 
 [![Data-Management](https://img.shields.io/badge/Data%20Management-v2-green.svg)](http://developer.autodesk.com/)
 [![BIM-360](https://img.shields.io/badge/BIM%20360-v1-green.svg)](http://developer.autodesk.com/)
@@ -14,7 +15,7 @@
 # Description
 Command line tool to setup BIM 360 projects, services, users, it includes the following functionalities:
 - Create Projects in Batch
-- Copy Projects with Folders (only **Plan** and **Project File** folder, no permission copy)
+- Copy Projects with Folders (only **Plan** and **Project File** folder, no permission copy) from a template project
 - Activate Services by Adding User as Admin
 - Add Users to Project as Admin or User
 
@@ -22,8 +23,10 @@ Command line tool to setup BIM 360 projects, services, users, it includes the fo
 
 
 # Prerequisites
+- Visual Studio: Either Community (Windows) or Code (Windows, MacOS).
+- CefSharp: Chromium based browser control for .NET apps
+- .NET Framework basic knowledge with C#
 - Register your **Forge App** and connect your Forge App to a Specific BIM 360 Account, follow the [tutorial](https://forge.autodesk.com/en/docs/bim360/v1/tutorials/getting-started/get-access-to-account/)
-- The sample input files defined in the spreadsheet structure must be maintained. All required fields must be filled in order for the tool to work properly.
 
 # Download
 Download the [Project Setup Tool](download/BIM360-ProjectSetupTool.zip)
@@ -53,6 +56,7 @@ Autodesk.BimProjectSetup.exe -s ".\sample\BIM360_Service_Template.csv" -c "<YOUR
  ```powershell
 Autodesk.BimProjectSetup.exe -u ".\sample\BIM360_ProjectUser_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin.account@yourcompany.com"
 ```
+Note: These template files are just samples which are defined in the spreadsheet structure for you to reference, all required fields must be filled in order for the tool to work properly, please refer the [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for the details.
 
 
 ## Command Line Options
