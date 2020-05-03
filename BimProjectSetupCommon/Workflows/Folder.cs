@@ -288,7 +288,7 @@ namespace BimProjectSetupCommon.Workflow
             }
 
             // Iterate root folders and match the name with original project folders
-            Log.Info("- copying folders to the new project.");
+            Log.Info("- copying folders(including folder permission of role) to the new project.");
             foreach (Folder newRootFolder in newTopFoldersRes.data)
             {
                 if (folderStructures.ContainsKey(orgProj.name))
@@ -296,7 +296,13 @@ namespace BimProjectSetupCommon.Workflow
                     NestedFolder existingRootFolder = folderStructures[orgProj.name].Find(x => x.name == newRootFolder.attributes.name);
                     if (existingRootFolder != null)
                     {
-                        Log.Info("- copying the subfolders of root folder: " + newRootFolder.attributes.name);
+                        // assign permission to root folder first
+                        Log.Info("- assigning role permissions to root folder: " + newRootFolder.attributes.name);
+                        bool res = _foldersApi.AssignPermission(newProjId, newRootFolder.id, existingRootFolder.permissions, uid);
+                        if (!res)
+                            Log.Warn($"Failed to assgn role permissions to root folder: {newRootFolder.attributes.name}.");
+   
+                        Log.Info("- copying the subfolders(including folder permission of role) of root folder: " + newRootFolder.attributes.name);
                         foreach (NestedFolder childFolder in existingRootFolder.childrenFolders)
                         {
                             // Without below, access to the project is forbidden...
@@ -332,6 +338,12 @@ namespace BimProjectSetupCommon.Workflow
             else
             {
                 retryCounter = 0; // Reset the counter
+                Log.Info("-- assigning role permission to folder: " + newFolder.name);
+                // assign permission to the new created folder
+                bool res = _foldersApi.AssignPermission(projId, newFolderId, newFolder.permissions, uid );
+                if( !res )
+                    Log.Warn($"Failed to assgn role permissions to the new created folder: {newFolder.name}.");
+          
                 if (newFolder.childrenFolders.Count > 0)
                 {
                     foreach (NestedFolder childFolder in newFolder.childrenFolders)

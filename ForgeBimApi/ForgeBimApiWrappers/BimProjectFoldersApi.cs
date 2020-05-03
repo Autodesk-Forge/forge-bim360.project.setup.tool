@@ -266,6 +266,15 @@ namespace Autodesk.Forge.BIM360
 
             try
             {
+                // keep the current folder permission
+                List<FolderPermission> folderPermissions = new List<FolderPermission>();
+
+                IRestResponse res = GetFolderPermissions(projectId, thisFolder.id, out folderPermissions);
+                if( res.StatusCode == System.Net.HttpStatusCode.OK )
+                {
+                    thisFolder.permissions.AddRange(folderPermissions);
+                }
+
                 IList<NestedFolder> output = new List<NestedFolder>();
 
                 //get the subfolders and items residing in the folder
@@ -297,6 +306,44 @@ namespace Autodesk.Forge.BIM360
                 throw ex;
             }
         }
+
+
+        /// <summary>
+        /// Get a list of permissions for a specified folder
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <param name="folderId"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public IRestResponse GetFolderPermissions(string projectId, string folderId, out List<FolderPermission> result)
+        {
+            result = new List<FolderPermission>();
+
+            if (projectId.StartsWith("b.") == true)
+            {
+                projectId = projectId.Remove(0,2);
+            }
+
+            var request = new RestRequest(Method.GET);
+            request.Resource = Urls["folder_permission"];
+  
+            request.AddParameter("ProjectId", projectId, ParameterType.UrlSegment);
+            request.AddParameter("FolderId", folderId, ParameterType.UrlSegment);
+            request.AddHeader("authorization", $"Bearer {Token}");
+            request.AddHeader("Cache-Control", "no-cache");
+
+            IRestResponse response = ExecuteRequest(request);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                JsonSerializerSettings settings = new JsonSerializerSettings();
+                settings.NullValueHandling = NullValueHandling.Ignore;
+                List<FolderPermission> roles = JsonConvert.DeserializeObject<List<FolderPermission>>(response.Content, settings);
+                result.AddRange(roles);
+            }
+            return response;
+        }
+
+
 
         /// <summary>
         /// Iterate through a passed in path 
@@ -387,6 +434,49 @@ namespace Autodesk.Forge.BIM360
 
             return newFolderId;
         }
+
+
+        /// <summary>
+        /// Assign only role permission to a specified folder
+        /// </summary>
+        /// <param name="projectId"></param>
+        /// <param name="folderId"></param>
+        /// <param name="folderPermissions"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public bool AssignPermission(string projectId,  string folderId, List<FolderPermission> folderPermissions,  string userId )
+        {
+            List<FolderPermission> rolePermissions = folderPermissions.Where(permission => permission.subjectType == "ROLE" && permission.actions.Count > 0).ToList();
+            
+            // no need to do anything is there is no role permission for this folder
+            if (rolePermissions.Count == 0)
+                return true;
+
+            if (projectId.StartsWith("b.") == true)
+            {
+                projectId = projectId.Remove(0, 2);
+            }
+
+            var request = new RestRequest(Method.POST);
+            request.Resource = Urls["folder_permission_create"];
+            request.AddParameter("ProjectId", projectId, ParameterType.UrlSegment);
+            request.AddParameter("FolderId", folderId, ParameterType.UrlSegment);
+
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.NullValueHandling = NullValueHandling.Ignore;
+            string permissionsString = JsonConvert.SerializeObject(rolePermissions, settings);
+            request.AddParameter("application/json", permissionsString, ParameterType.RequestBody);
+
+            request.AddHeader("Authorization", "Bearer " + Token);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("x-user-id", userId);
+
+            IRestResponse response = ExecuteRequest(request);
+
+            return response.StatusCode == System.Net.HttpStatusCode.OK;
+        }
+
+
 
         /// <summary>
         /// This provides the JSON body content for the CreateFolder command.  Since only two paramters change and the
