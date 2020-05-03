@@ -114,6 +114,7 @@
     <Compile Include="Serialization\Resources.cs" />
     <Compile Include="Serialization\ResponseContent.cs" />
     <Compile Include="Serialization\ResponseStats.cs" />
+    <Compile Include="Serialization\FolderPermission.cs" />
     <Compile Include="Serialization\RootFolder.cs" />
     <Compile Include="Serialization\Schema.cs" />
     <Compile Include="Serialization\Self.cs" />

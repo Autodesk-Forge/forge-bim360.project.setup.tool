@@ -123,6 +123,8 @@ namespace Autodesk.Forge.BIM360
             Urls["hubs"] = "project/v1/hubs";
             Urls["hubs_hubId"] = "project/v1/hubs/{HubId}";
             Urls["hubs_topfolders"] = "project/v1/hubs/{HubId}/projects/{ProjectId}/topFolders";
+            Urls["folder_permission"] = "bim360/docs/v1/projects/{ProjectId}/folders/{FolderId}/permissions";
+            Urls["folder_permission_create"] = "bim360/docs/v1/projects/{ProjectId}/folders/{FolderId}/permissions:batch-create";
         }
 
         public IRestResponse ExecuteRequest(RestRequest req)

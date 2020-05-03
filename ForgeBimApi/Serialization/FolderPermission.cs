@@ -18,34 +18,31 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 namespace Autodesk.Forge.BIM360.Serialization
 {
-    public class NestedFolder
+    public class FolderPermission
     {
-        #region Propserties
-        public string name { get; set; }
-        public string id { get; set; }
-        public NestedFolder parentFolder { get; set; }
-        public List<NestedFolder> childrenFolders { get; set; }
-        public IList<Data> items { get; set; }
-        public List<FolderPermission> permissions { get; set; }
-        #endregion
+        public string subjectId;
+        public string autodeskId;
+        public string name;
 
-        #region Constructor
-        public NestedFolder(string name, string id, NestedFolder parentFolder = null)
+        public string subjectType;
+        public string subjectStatus;
+        public List<string> actions;
+        
+        //[JsonIgnore]
+        public List<string> inheritActions;
+
+
+        public FolderPermission()
         {
-            this.name = name;
-            this.id = id;
-            this.parentFolder = parentFolder;
-
-            childrenFolders = new List<NestedFolder>();
-            items = new List<Data>();
-            permissions = new List<FolderPermission>();
+            actions          = new List<string>();
+            inheritActions   = new List<string>();
         }
-        #endregion
     }
-}
+} // namespace
