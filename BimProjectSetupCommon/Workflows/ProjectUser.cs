@@ -136,7 +136,7 @@ namespace BimProjectSetupCommon.Workflow
                     IEnumerable<List<ProjectUser>> chunks = Util.SplitList(users.ToList());
                     foreach (List<ProjectUser> list in chunks)
                     {
-                        IRestResponse response = _projectsApi.PostUsersImport(project.id, hqAdmin.uid, users.ToList());
+                        IRestResponse response = _projectsApi.PostUsersImport(project.id, hqAdmin.uid, list);
                         ProjectUserResponseHandler(response);
                     }
                 }
