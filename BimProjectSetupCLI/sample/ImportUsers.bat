@@ -1,6 +1,6 @@
-﻿set FORGE_CLIENT_ID=<your_client_id>
-set FORGE_CLIENT_SECRET=<your_client_secret>
-set FORGE_BIM_ACCOUNT_ID=<your_account_id>
+﻿set FORGE_CLIENT_ID=<your_client_id_without_quotation_marks>
+set FORGE_CLIENT_SECRET=<your_client_secret_without_quotation_marks>
+set FORGE_BIM_ACCOUNT_ID=<your_account_id_without_quotation_marks>
 cd ..
-Autodesk.BimProjectSetup.exe -u ".\sample\BIM360_ProjectUser_Template.csv" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin.account@yourcompny.com"
+Autodesk.BimProjectSetup.exe -u ".\sample\BIM360_ProjectUser_Template.csv" -h "admin.account@yourcompny.com"
 pause

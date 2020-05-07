@@ -1,2 +1,3 @@
 project_name;service_type;email;company
-Setup Tool Test project 1;doc_manager;user@company.com;Autodesk
+Sample Project 1;doc_manager;user@company.com;User Company Name
+Sample Project 1;field;user@company.com;User Company Name

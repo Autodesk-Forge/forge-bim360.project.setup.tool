@@ -101,6 +101,7 @@ Note: These template files used in the scripts are just samples which are define
     2. Make sure the .CSV file is formatted in UTF-8 code.
     3. Open the file in a text editor such as Notepad++ after it was saved to ensure the above two points.
 - Logging can be configured in the Nlog.config file. Further information can be found here: https://github.com/nlog/NLog/wiki/Configuration-file.
+- If running the tool from the batch file under sample folder, please make sure to set FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_BIM_ACCOUNT_ID correctly(**DO NOT** include quotation marks).
 
 
 
