@@ -1,2 +1,6 @@
 project_name;email;pm_access;docs_access;company_name;industry_roles
-Setup Tool Test project 1;user@company.com;admin;admin;Autodesk;Architect
+Sample Project 1;user1@company.com;admin;admin;;Architect
+Sample Project 1;user2@company.com;admin;admin;;Architect
+Sample Project 2;user1@company.com;admin;admin;;Architect
+Sample Project 2;user2@company.com;admin;admin;;Architect
+

@@ -102,17 +102,32 @@ Note: These template files used in the scripts are just samples which are define
     3. Open the file in a text editor such as Notepad++ after it was saved to ensure the above two points.
 - Logging can be configured in the Nlog.config file. Further information can be found here: https://github.com/nlog/NLog/wiki/Configuration-file.
 - If running the tool from the batch file under sample folder, please make sure to set FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_BIM_ACCOUNT_ID correctly(**DO NOT** include quotation marks).
+- Currently, the following project services could be activated:
 
+    | Service Type | Description | 
+    | :-----:| :----: | 
+    | admin | BIM 360 Project Administration Service | 
+    | doc_manager | BIM 360 Document Management Service | 
+    | pm | BIM 360 Project Management Service | 
+    | fng | BIM 360 Field Management Service |
+    | collab | BIM 360 Design Collaboration Service | 
+    | cost | BIM 360 Cost Management Service | 
+    | gng | BIM 360 Model Coordination Service | 
+    | plan | BIM 360 Plan Classic Service | 
+    | field | BIM 360 Field Classic Service | 
+    | glue | BIM 360 Glue Classic Service | 
 
 
 # Limitation
 - CSV files need to be prepared with the correct format and required parameters, check [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for details.
-- From the services listed in  [service_type parameters documentation](https://forge.autodesk.com/en/docs/bim360/v1/overview/parameters/) only the following can be activated by this tool: **doc_manager**, **field**, **glue**. The parameter values field and glue are used for the **'classic'** products, not for the next gen products
 - **Copy Folder** only support **Plan** and **Project File** folder and their subfolders.
 - Copy folder support copy role permissions with this tool.
 
-# License
 
+# Change History
+All the changes will be tracked, please see the [Change History](CHANGELOG.md) file for full details.
+
+# License
 This sample is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT). Please see the [LICENSE](LICENSE.md) file for full details.
 
 
