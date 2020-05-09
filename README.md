@@ -14,10 +14,10 @@
 
 # Description
 Command line tool to setup BIM 360 projects, services, users, it includes the following functionalities:
-- Create Projects in Batch
-- Copy Projects with Folders from a template project(including role permission)
-- Activate Services by Adding User as Admin
-- Add Users to Project as Admin or User
+- Create Projects based on CSV input file
+- Copy Projects with folders structure from a template project(supporting copy role permission)
+- Activate project services by adding project admin
+- Import users to project as admin or normal user
 
 # Thumbnail
 ![thumbnail](/thumbnail.gif)
@@ -116,7 +116,7 @@ Note: These template files used in the scripts are just samples which are define
     | plan | BIM 360 Plan Classic Service | 
     | field | BIM 360 Field Classic Service | 
     | glue | BIM 360 Glue Classic Service | 
-
+- Project admin has to accept the invitation from email to make the services accessable.
 
 # Limitation
 - CSV files need to be prepared with the correct format and required parameters, check [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for details.
