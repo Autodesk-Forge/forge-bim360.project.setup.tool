@@ -35,7 +35,9 @@ Command line tool to setup BIM 360 projects, services, users, it includes the fo
 # Features
 ![features](./UseCases.png)
 
-This sample app includes a few features as detailed in [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf), in short, please follow the scripts to create projects, activate services, then add project users.
+This sample app includes a few features as detailed in [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf), in short, please check the following video for the introduction, or follow the scripts directly to create projects, activate services, import project users.
+
+[![https://youtu.be/dAIn9ANPYrE](http://img.youtube.com/vi/dAIn9ANPYrE/0.jpg)](https://youtu.be/dAIn9ANPYrE "BIM 360 project setup tool - introductioon")
 
 Always replace the capitalized content in braces with your values before executing the script:
  ```powershell
@@ -45,20 +47,32 @@ Always replace the capitalized content in braces with your values before executi
 
 ## Create BIM360 projects:
  ```powershell
-Autodesk.BimProjectSetup.exe -p ".\sample\BIM360_Projects_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin.account@yourcompany.com"
+Autodesk.BimProjectSetup.exe -p ".\sample\BIM360_Projects_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false
 ```
-If you want to create project with folders, please add --CF as follow:
+
+[![https://youtu.be/pU40CrG5Gys](http://img.youtube.com/vi/pU40CrG5Gys/0.jpg)](https://youtu.be/pU40CrG5Gys "BIM 360 project setup tool - create projects")
+
+## Create BIM360 projects from template project:
  ```powershell
-Autodesk.BimProjectSetup.exe -p ".\sample\BIM360_Projects_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin.account@yourcompany.com" --CF
+Autodesk.BimProjectSetup.exe -p ".\sample\BIM360_Projects_CF_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin@company.com" --CF
 ```
+
+[![https://youtu.be/QTSUuhMqX7o](http://img.youtube.com/vi/QTSUuhMqX7o/0.jpg)](https://youtu.be/QTSUuhMqX7o "BIM 360 project setup tool - create project from template")
+
 ## Activate Services by Adding User as Admin
  ```powershell
-Autodesk.BimProjectSetup.exe -s ".\sample\BIM360_Service_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin.account@yourcompany.com"
+Autodesk.BimProjectSetup.exe -s ".\sample\BIM360_Service_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false
 ```
+
+[![https://youtu.be/iEz8cGIayeM](http://img.youtube.com/vi/iEz8cGIayeM/0.jpg)](https://youtu.be/iEz8cGIayeM "BIM 360 project setup tool - activate services")
+
 ## Add Users to Project as Admin or User
  ```powershell
-Autodesk.BimProjectSetup.exe -u ".\sample\BIM360_ProjectUser_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin.account@yourcompany.com"
+Autodesk.BimProjectSetup.exe -u ".\sample\BIM360_ProjectUser_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "project.admin@company.com"
 ```
+
+[![https://youtu.be/cXnvoOS_-Wk](http://img.youtube.com/vi/cXnvoOS_-Wk/0.jpg)](https://youtu.be/cXnvoOS_-Wk "BIM 360 project setup tool - import users")
+
 Note: These template files used in the scripts are just samples which are defined in the spreadsheet structure for you to reference, all required fields must be filled in order for the tool to work properly, please refer the [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for the details.
 
 
