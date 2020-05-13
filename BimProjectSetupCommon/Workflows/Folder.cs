@@ -296,6 +296,9 @@ namespace BimProjectSetupCommon.Workflow
                     NestedFolder existingRootFolder = folderStructures[orgProj.name].Find(x => x.name == newRootFolder.attributes.name);
                     if (existingRootFolder != null)
                     {
+                        // Without below, access to the project is forbidden...
+                        Thread.Sleep(3000);
+
                         // assign permission to root folder first
                         Log.Info("- assigning role permissions to root folder: " + newRootFolder.attributes.name);
                         bool res = _foldersApi.AssignPermission(newProjId, newRootFolder.id, existingRootFolder.permissions, uid);
@@ -305,9 +308,6 @@ namespace BimProjectSetupCommon.Workflow
                         Log.Info("- copying the subfolders(including folder permission of role) of root folder: " + newRootFolder.attributes.name);
                         foreach (NestedFolder childFolder in existingRootFolder.childrenFolders)
                         {
-                            // Without below, access to the project is forbidden...
-                            Thread.Sleep(3000);
-
                             // Recursively create new child folders
                             RecursivelyCreateFolder(newProjId, uid, newRootFolder.id, childFolder);
                         }
