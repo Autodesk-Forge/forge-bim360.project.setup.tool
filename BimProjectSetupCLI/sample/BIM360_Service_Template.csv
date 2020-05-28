@@ -1,2 +1,11 @@
 project_name;service_type;email;company
-Setup Tool Test project 1;doc_manager;user@company.com;Autodesk
+Sample Project 1;admin;admin@company.com;Company Name
+Sample Project 1;doc_manager;admin@company.com;Company Name
+Sample Project 1;pm;admin@company.com;Company Name
+Sample Project 1;fng;admin@company.com;Company Name
+Sample Project 1;collab;admin@company.com;Company Name
+Sample Project 1;cost;admin@company.com;Company Name
+Sample Project 1;gng;admin@company.com;Company Name
+Sample Project 1;glue;admin@company.com;Company Name
+Sample Project 1;plan;admin@company.com;Company Name
+Sample Project 1;field;admin@company.com;Company Name

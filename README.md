@@ -14,10 +14,10 @@
 
 # Description
 Command line tool to setup BIM 360 projects, services, users, it includes the following functionalities:
-- Create Projects in Batch
-- Copy Projects with Folders from a template project(including role permission)
-- Activate Services by Adding User as Admin
-- Add Users to Project as Admin or User
+- Create Projects based on CSV input file
+- Copy Projects with folders structure from a template project(supporting copy role permission)
+- Activate project services by adding project admin
+- Import users to project as admin or normal user
 
 # Thumbnail
 ![thumbnail](/thumbnail.gif)
@@ -35,7 +35,9 @@ Command line tool to setup BIM 360 projects, services, users, it includes the fo
 # Features
 ![features](./UseCases.png)
 
-This sample app includes a few features as detailed in [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf), in short, please follow the scripts to create projects, activate services, then add project users.
+This sample app includes a few features as detailed in [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf), in short, please check the following video for the introduction, or follow the scripts directly to create projects, activate services, import project users.
+
+[![https://youtu.be/dAIn9ANPYrE](http://img.youtube.com/vi/dAIn9ANPYrE/0.jpg)](https://youtu.be/dAIn9ANPYrE "BIM 360 project setup tool - introductioon")
 
 Always replace the capitalized content in braces with your values before executing the script:
  ```powershell
@@ -43,22 +45,38 @@ Always replace the capitalized content in braces with your values before executi
  etc.
  ```
 
-## Create BIM360 projects:
+## Feature 1: Create BIM360 projects:
  ```powershell
-Autodesk.BimProjectSetup.exe -p ".\sample\BIM360_Projects_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin.account@yourcompany.com"
+Autodesk.BimProjectSetup.exe -p ".\sample\BIM360_Projects_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false
 ```
-If you want to create project with folders, please add --CF as follow:
+Watch the following video:
+
+[![https://youtu.be/pU40CrG5Gys](http://img.youtube.com/vi/pU40CrG5Gys/0.jpg)](https://youtu.be/pU40CrG5Gys "BIM 360 project setup tool - create projects")
+
+## Feature 2: Create BIM360 projects from template project:
  ```powershell
-Autodesk.BimProjectSetup.exe -p ".\sample\BIM360_Projects_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin.account@yourcompany.com" --CF
+Autodesk.BimProjectSetup.exe -p ".\sample\BIM360_Projects_CF_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin@company.com" --CF
 ```
-## Activate Services by Adding User as Admin
+Watch the following video:
+
+[![https://youtu.be/QTSUuhMqX7o](http://img.youtube.com/vi/QTSUuhMqX7o/0.jpg)](https://youtu.be/QTSUuhMqX7o "BIM 360 project setup tool - create project from template")
+
+## Feature 3: Activate Services by Adding User as Admin
  ```powershell
-Autodesk.BimProjectSetup.exe -s ".\sample\BIM360_Service_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin.account@yourcompany.com"
+Autodesk.BimProjectSetup.exe -s ".\sample\BIM360_Service_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false
 ```
-## Add Users to Project as Admin or User
+Watch the following video:
+
+[![https://youtu.be/iEz8cGIayeM](http://img.youtube.com/vi/iEz8cGIayeM/0.jpg)](https://youtu.be/iEz8cGIayeM "BIM 360 project setup tool - activate services")
+
+## Feature 4: Add Users to Project as Admin or User
  ```powershell
-Autodesk.BimProjectSetup.exe -u ".\sample\BIM360_ProjectUser_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "admin.account@yourcompany.com"
+Autodesk.BimProjectSetup.exe -u ".\sample\BIM360_ProjectUser_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "project.admin@company.com"
 ```
+Watch the following video:
+
+[![https://youtu.be/cXnvoOS_-Wk](http://img.youtube.com/vi/cXnvoOS_-Wk/0.jpg)](https://youtu.be/cXnvoOS_-Wk "BIM 360 project setup tool - import users")
+
 Note: These template files used in the scripts are just samples which are defined in the spreadsheet structure for you to reference, all required fields must be filled in order for the tool to work properly, please refer the [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for the details.
 
 
@@ -101,17 +119,33 @@ Note: These template files used in the scripts are just samples which are define
     2. Make sure the .CSV file is formatted in UTF-8 code.
     3. Open the file in a text editor such as Notepad++ after it was saved to ensure the above two points.
 - Logging can be configured in the Nlog.config file. Further information can be found here: https://github.com/nlog/NLog/wiki/Configuration-file.
+- If running the tool from the batch file under sample folder, please make sure to set FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_BIM_ACCOUNT_ID correctly(**DO NOT** include quotation marks).
+- Currently, the following project services could be activated:
 
-
+    | Service Type | Description | 
+    | :-----:| :----: | 
+    | admin | BIM 360 Project Administration Service | 
+    | doc_manager | BIM 360 Document Management Service | 
+    | pm | BIM 360 Project Management Service | 
+    | fng | BIM 360 Field Management Service |
+    | collab | BIM 360 Design Collaboration Service | 
+    | cost | BIM 360 Cost Management Service | 
+    | gng | BIM 360 Model Coordination Service | 
+    | plan | BIM 360 Plan Classic Service | 
+    | field | BIM 360 Field Classic Service | 
+    | glue | BIM 360 Glue Classic Service | 
+- Project admin has to accept the invitation from email to make the services accessable.
 
 # Limitation
 - CSV files need to be prepared with the correct format and required parameters, check [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for details.
-- From the services listed in  [service_type parameters documentation](https://forge.autodesk.com/en/docs/bim360/v1/overview/parameters/) only the following can be activated by this tool: **doc_manager**, **field**, **glue**. The parameter values field and glue are used for the **'classic'** products, not for the next gen products
 - **Copy Folder** only support **Plan** and **Project File** folder and their subfolders.
 - Copy folder support copy role permissions with this tool.
 
-# License
 
+# Change History
+All the changes will be tracked, please see the [Change History](CHANGELOG.md) file for full details.
+
+# License
 This sample is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT). Please see the [LICENSE](LICENSE.md) file for full details.
 
 

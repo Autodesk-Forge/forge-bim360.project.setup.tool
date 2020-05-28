@@ -192,7 +192,7 @@ namespace BimProjectSetupCommon
 
             if (encodingInfos != null)
             {
-                encodingInfo = encodingInfos.FirstOrDefault(e => e.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+                encodingInfo = encodingInfos.FirstOrDefault(e => e.Name != null && e.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
                 if (encodingInfo == null)
                 {
                     int codePage;
