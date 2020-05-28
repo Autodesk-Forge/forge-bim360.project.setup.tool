@@ -123,7 +123,7 @@ namespace BimProjectSetupCommon.Workflow
                     Log.Warn($"- no valid users found for project {name} - skipping this project and continue with next");
                     continue;
                 }
-                var project = DataController.AllProjects.FirstOrDefault(p => p.name.Equals(name));
+                var project = DataController.AllProjects.FirstOrDefault(p => p.name != null && p.name.Equals(name));
 
                 if (users.Count() < 50)
                 {
@@ -239,7 +239,7 @@ namespace BimProjectSetupCommon.Workflow
             List<IndustryRole> result = null;
             if (false == _projectToRolesDict.TryGetValue(projectName, out result))
             {
-                BimProject project = DataController.AllProjects.FirstOrDefault(p => p.name.Equals(projectName));
+                BimProject project = DataController.AllProjects.FirstOrDefault(p => p.name != null && p.name.Equals(projectName));
                 if (project == null)
                 {
                     throw new ApplicationException($"No projects found for name '{projectName}'");
@@ -286,7 +286,7 @@ namespace BimProjectSetupCommon.Workflow
                 foreach (string name in roleNames)
                 {
                     string n = name.Trim();
-                    IndustryRole role = roles.FirstOrDefault(r => r.name.Equals(name));
+                    IndustryRole role = roles.FirstOrDefault(r => r.name != null && r.name.Equals(name));
                     if (role != null)
                     {
                         result.Add(role.id);
@@ -311,7 +311,7 @@ namespace BimProjectSetupCommon.Workflow
         }
         private bool CheckAdminEmail(string adminEmail, out HqUser HqAdmin)
         {
-            HqAdmin = DataController.AccountUsers.FirstOrDefault(u => u.email.Equals(adminEmail, StringComparison.InvariantCultureIgnoreCase));
+            HqAdmin = DataController.AccountUsers.FirstOrDefault(u => u.email != null && u.email.Equals(adminEmail, StringComparison.InvariantCultureIgnoreCase));
             if (HqAdmin == null)
             {
                 Log.Error($"Error initializing account admin user {adminEmail}");

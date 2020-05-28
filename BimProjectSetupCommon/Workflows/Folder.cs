@@ -358,7 +358,7 @@ namespace BimProjectSetupCommon.Workflow
             List<IndustryRole> result = null;
             if (false == _projectToRolesDict.TryGetValue(projectName, out result))
             {
-                BimProject project = DataController.AllProjects.FirstOrDefault(p => p.name.Equals(projectName));
+                BimProject project = DataController.AllProjects.FirstOrDefault(p => p.name != null && p.name.Equals(projectName));
                 if (project == null)
                 {
                     throw new ApplicationException($"No projects found for name '{projectName}'");

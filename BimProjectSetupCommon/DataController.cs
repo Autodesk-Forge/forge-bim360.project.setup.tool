@@ -122,7 +122,7 @@ namespace BimProjectSetupCommon
         public static string GetProjectIdByName(string projectName)
         {
             BimProject result = null;
-            result = AllProjects.FirstOrDefault(p => p.name.Equals(projectName));
+            result = AllProjects.FirstOrDefault(p => p.name != null && p.name.Equals(projectName));
             return (result != null ? result.id : null);
         }
         #endregion
@@ -362,7 +362,7 @@ namespace BimProjectSetupCommon
                         continue;
                     }
 
-                    BimCompany comp = Companies.FirstOrDefault(c => c.name.Equals(service.company));
+                    BimCompany comp = Companies.FirstOrDefault(c => c.name != null && c.name.Equals(service.company));
                     if (comp != null) service.company_id = comp.id;
                 }
                 catch (Exception e)
@@ -385,7 +385,7 @@ namespace BimProjectSetupCommon
             string result = null;
             if (bu != null && BusinessUnits != null && BusinessUnits.Count > 0)
             {
-                BusinessUnit unit = BusinessUnits.FirstOrDefault(b => b.name.Equals(buName, StringComparison.InvariantCultureIgnoreCase));
+                BusinessUnit unit = BusinessUnits.FirstOrDefault(b => b.name != null && b.name.Equals(buName, StringComparison.InvariantCultureIgnoreCase));
                 if (unit != null) result = unit.id;
             }
             return result;

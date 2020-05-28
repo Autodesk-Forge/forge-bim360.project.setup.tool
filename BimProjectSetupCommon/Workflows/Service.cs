@@ -116,7 +116,7 @@ namespace BimProjectSetupCommon.Workflow
                 {
                     foreach (ServiceActivation service in services)
                     {
-                        BimCompany comp = DataController.Companies.FirstOrDefault(c => c.name.Equals(service.company));
+                        BimCompany comp = DataController.Companies.FirstOrDefault(c => c.name != null && c.name.Equals(service.company));
                         if (comp != null) service.company_id = comp.id;
 
                         Log.Info($"- processing {service.service_type} for {service.email} on { project.name}");

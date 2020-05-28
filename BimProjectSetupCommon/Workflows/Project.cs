@@ -143,7 +143,7 @@ namespace BimProjectSetupCommon.Workflow
                 string name = Convert.ToString(DataController._projectTable.Rows[i]["name"]);
                 Log.Info($"- processing row {i + 1} - project name: {name}");
 
-                BimProject project = _projectsToCreate.FirstOrDefault(p => p.name.Equals(name));
+                BimProject project = _projectsToCreate.FirstOrDefault(p => p.name != null && p.name.Equals(name));
                 if (project == null || false == CheckRequiredParams(project, DataController._projectTable.Rows[i]))
                 {
                     Log.Error($"There's an incomplete input data");
@@ -167,7 +167,7 @@ namespace BimProjectSetupCommon.Workflow
                 string name = Convert.ToString(DataController._projectTable.Rows[i]["name"]);
                 Log.Info($"Processing row {i + 1} - project name: {name}");
 
-                BimProject project = _projectsToCreate.FirstOrDefault(p => p.name.Equals(name));
+                BimProject project = _projectsToCreate.FirstOrDefault(p => p.name != null && p.name.Equals(name));
                 if (project == null || false == CheckRequiredParams(project, DataController._projectTable.Rows[i]))
                 {
                     Log.Error($"Incomplete input data");
