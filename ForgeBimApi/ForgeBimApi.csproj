@@ -107,6 +107,7 @@
     <Compile Include="Serialization\Project.cs" />
     <Compile Include="Serialization\Projects.cs" />
     <Compile Include="Serialization\ProjectUser.cs" />
+    <Compile Include="Serialization\ProjectUserPatchResponse.cs" />
     <Compile Include="Serialization\ProjectUserResponse.cs" />
     <Compile Include="Serialization\Refs.cs" />
     <Compile Include="Serialization\Related.cs" />
