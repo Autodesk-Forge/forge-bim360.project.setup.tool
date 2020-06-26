@@ -41,7 +41,19 @@ namespace BimProjectSetupCommon.Workflow
             DataController.InitializeAllProjects();
             DataController.InitializeAccountUsers();
         }
+        public List<HqUser> CustomGetAllProjectUsers(string projectId)
+        {
+            List<HqUser> result = new List<HqUser>();
+            _projectsApi.CustomGetProjectUsers(out result, projectId);
 
+            return result;
+        }
+        public void CustomAddAllProjectUsers(DataTable table, List<HqUser> projectUsers, List<BimCompany> companies, string projectName, int startRow)
+        {
+            Log.Info("Adding members to project: " + projectName);
+            List<ProjectUser> _projectUsers = CustomGetUsers(table, projectUsers, companies, projectName, startRow);
+            AddUsers(_projectUsers);
+        }
         public void AddProjectUsersFromCsvProcess()
         {
             try
@@ -183,6 +195,79 @@ namespace BimProjectSetupCommon.Workflow
             }
             return compId;
         }
+        private List<ProjectUser> CustomGetUsers(DataTable table, List<HqUser> projectUsers, List<BimCompany> companies, string projectName, int startRow)
+        {
+            if (table == null)
+            {
+                return null;
+            }
+
+            List<ProjectUser> resultUsers = new List<ProjectUser>();
+
+            // Create list with all existing user emails in the project
+            List<string> existingUsers = new List<string>();
+            foreach (HqUser existingUser in projectUsers)
+            {
+                existingUsers.Add(existingUser.email);
+            }
+
+            // Create list with all existing companies
+            List<string> existingCompanies = new List<string>();
+            foreach (BimCompany existingCompany in companies)
+            {
+                existingCompanies.Add(existingCompany.name);
+            }
+
+            // Validate the data and convert
+            for (int row = startRow; row < table.Rows.Count; row++)
+            {
+                // Itterate until next project
+                if (!string.IsNullOrEmpty(table.Rows[row]["project_name"].ToString()) && row != startRow)
+                {
+                    break;
+                }
+
+                if (string.IsNullOrEmpty(table.Rows[row]["user_email"].ToString()))
+                {
+                    continue;
+                }
+
+                // Check if company exists
+                string companyName = table.Rows[row]["company"].ToString();
+                if (!string.IsNullOrEmpty(companyName) && !existingCompanies.Contains(companyName))
+                {
+                    throw new ApplicationException($"Something went wrong with the creation of companies. Company with name: "
+                        + companyName + " was not created. User with email: " + table.Rows[row]["user_email"].ToString() + "must be assigned to this company.");
+                }
+
+                string companyId = "";
+                foreach (BimCompany company in companies)
+                {
+                    if (company.name == companyName)
+                    {
+                        companyId = company.id;
+                    }
+                }
+
+                ProjectUser user = CustomGetUserForRow(table.Rows[row], projectName, companyId);
+
+                bool isUserAdded = false;
+
+                // Check if user with same email has been already added
+                foreach (ProjectUser projectUser in resultUsers)
+                {
+                    if (projectUser.email == user.email)
+                    {
+                        isUserAdded = true;
+                        break;
+                    }
+                }
+
+                // Add only if user had not been added already and user does not already exist
+                if (user != null && !isUserAdded && !existingUsers.Contains(user.email)) resultUsers.Add(user);
+            }
+            return resultUsers;
+        }
         private List<ProjectUser> GetUsers(DataTable table)
         {
             if (table == null)
@@ -215,7 +300,26 @@ namespace BimProjectSetupCommon.Workflow
             }
             return users;
         }
+        private ProjectUser CustomGetUserForRow(DataRow row, string projectName, string companyId)
+        {
+            // Add member with user access
 
+            ProjectUser user = new ProjectUser();
+
+            user.project_name = projectName;
+            user.email = Util.GetStringOrNull(row["user_email"]);
+            // user.pm_access = GetAccessLevel(row["pm_access"]);
+            // user.docs_access = GetAccessLevel(row["docs_access"]);
+            user.company_id = companyId;
+            // user.industry_roles = GetIndustryRoleIds(projectName, row["roles"]);
+            AddServices(user);
+
+            if (string.IsNullOrWhiteSpace(user.email))
+            {
+                throw new ApplicationException($"No email available for user - check CSV files!");
+            }
+            return user;
+        }
         private ProjectUser GetUserForRow(DataRow row, string projectName)
         {
             ProjectUser user = new ProjectUser();

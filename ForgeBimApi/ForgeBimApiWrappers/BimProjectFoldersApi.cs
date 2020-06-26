@@ -342,9 +342,6 @@ namespace Autodesk.Forge.BIM360
             }
             return response;
         }
-
-
-
         /// <summary>
         /// Iterate through a passed in path 
         /// </summary>
@@ -389,7 +386,41 @@ namespace Autodesk.Forge.BIM360
 
             return GetBranchFolder(hubId, projectId, childFolder.id, fullPath, currentPath + "/" + childFolder.attributes.displayName);
         }
+        public string CustomCreateFolder(string projectId, string parentFolderId, string newFolderName)
+        {
+            if (projectId.StartsWith("b.") == false)
+            {
+                projectId = "b." + projectId;
+            }
 
+            var request = new RestRequest(Method.POST);
+
+            // "data/v1/projects/" + projectId + "/folders"
+            request.Resource = string.Format("{0}{1}/folders",
+                                              "data/v1/projects/",
+                                              projectId);
+
+            request.AddHeader("Authorization", "Bearer " + Token);
+            request.AddHeader("Content-Type", "application/vnd.api+json");
+            request.AddParameter("application/vnd.api+json", createFolderJsonBody(newFolderName, parentFolderId), ParameterType.RequestBody);
+
+            IRestResponse response = ExecuteRequest(request);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.Created)
+            {
+                return "error";
+            }
+
+            JsonSerializerSettings jss = new JsonSerializerSettings();
+            jss.NullValueHandling = NullValueHandling.Ignore;
+
+            CreateFolderResponse jsonResponse =
+                JsonConvert.DeserializeObject<CreateFolderResponse>(response.Content, jss);
+
+            string newFolderId = jsonResponse.data.id;
+
+            return newFolderId;
+        }
         /// <summary>
         /// Creates a new folder
         /// </summary>
@@ -434,8 +465,30 @@ namespace Autodesk.Forge.BIM360
 
             return newFolderId;
         }
+        public bool CustomAssignPermission(string projectId, string folderId, List<FolderPermission> folderPermissions)
+        {
+            if (projectId.StartsWith("b.") == true)
+            {
+                projectId = projectId.Remove(0, 2);
+            }
 
+            var request = new RestRequest(Method.POST);
+            request.Resource = Urls["folder_permission_create"];
+            request.AddParameter("ProjectId", projectId, ParameterType.UrlSegment);
+            request.AddParameter("FolderId", folderId, ParameterType.UrlSegment);
 
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.NullValueHandling = NullValueHandling.Ignore;
+            string permissionsString = JsonConvert.SerializeObject(folderPermissions, settings);
+            request.AddParameter("application/json", permissionsString, ParameterType.RequestBody);
+
+            request.AddHeader("Authorization", "Bearer " + Token);
+            request.AddHeader("Content-Type", "application/json");
+
+            IRestResponse response = ExecuteRequest(request);
+
+            return response.StatusCode == System.Net.HttpStatusCode.OK;
+        }
         /// <summary>
         /// Assign only role permission to a specified folder
         /// </summary>

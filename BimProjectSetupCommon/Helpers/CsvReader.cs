@@ -101,6 +101,85 @@ namespace BimProjectSetupCommon.Helpers
             DataTable result = ReadFile(filePath);
             return result;
         }
+        internal static DataTable CustomReadDataFromCSV()
+        {
+
+            Console.WriteLine("Reading CSV-File...");
+
+            if (false == string.IsNullOrEmpty(DataController._options.FilePath))
+            {
+                DataTable table = ReadFile(DataController._options.FilePath, DataController._options.Separator, DataController._options.Encoding);
+
+                CustomCheckRequiredColumns(table);
+
+                CustomCheckRequiredRows(table);
+
+                return table;
+            }
+            else
+            {
+                throw new ApplicationException($"No FilePath for the CSV-File is given!\n");
+            }
+        }
+        internal static void CustomCheckRequiredColumns(DataTable table)
+        {
+
+            Console.WriteLine("Checking required columns...");
+
+            // Check if all required columns are existing
+            // Only one level of subfolders is required - more than one is also possible but not required
+            if (!table.Columns.Contains("project_name") || !table.Columns.Contains("level_1") ||
+                !table.Columns.Contains("permission") || !table.Columns.Contains("user_email") || !table.Columns.Contains("company"))
+            {
+                throw new ApplicationException($"Not all required columns are presented in the CSV-File. Required columns are: " +
+                    $"'project_name', 'level_1', 'permission', 'user_email' and 'company'\n");
+            }
+
+            // Check if the order of the columns is correct and if the company column is the last one
+            else if (table.Columns.IndexOf("project_name") > table.Columns.IndexOf("level_1") ||
+                table.Columns.IndexOf("level_1") > table.Columns.IndexOf("permission") || table.Columns.IndexOf("permission") > table.Columns.IndexOf("user_email") ||
+                table.Columns.IndexOf("user_email") > table.Columns.IndexOf("company") || table.Columns.IndexOf("company") != table.Columns.Count -1)
+            {
+                throw new ApplicationException($"The columns in the CSV-File are not in the correct order. Please use the template!\n");
+            }
+        }
+        internal static void CustomCheckRequiredRows(DataTable table)
+        {
+
+            Console.WriteLine("Checking required rows...");
+
+            // First row must be a populated row
+            if (string.IsNullOrEmpty(table.Rows[0]["project_name"].ToString()))
+            {
+                throw new ApplicationException($"The first row of the CSV-File must include a project.\n");
+            }
+
+            for (int i = 1; i < table.Rows.Count; i++)
+            {
+                // Check if emty row exists before each new project (without the first one)
+                foreach (DataColumn column in table.Columns)
+                {
+                    if (!string.IsNullOrEmpty(table.Rows[i]["project_name"].ToString()) && !string.IsNullOrEmpty(table.Rows[i-1][column].ToString()))
+                    {
+                        throw new ApplicationException($"Before each new project an empty row is required in the CSV-File (not the first project).\n");
+                    }
+
+                }
+
+                // Check if a user always corresponds to a company
+                //if (!string.IsNullOrEmpty(table.Rows[i]["company"].ToString()) && string.IsNullOrEmpty(table.Rows[i]["user_email"].ToString()))
+                //{
+                //    return false;
+                //}
+
+                // Check if a permission alwas corresponds to a user and vice versa
+                if ((!string.IsNullOrEmpty(table.Rows[i]["permission"].ToString()) && string.IsNullOrEmpty(table.Rows[i]["user_email"].ToString())) ||
+                    (string.IsNullOrEmpty(table.Rows[i]["permission"].ToString()) && !string.IsNullOrEmpty(table.Rows[i]["user_email"].ToString())))
+                {
+                    throw new ApplicationException($"A permission must always corresponds to a user and vice versa. Please use the template!\n");
+                }
+            }
+        }
         internal static DataTable ReadDataFromCSV(DataTable targetTable, string filePath)
         {
             if (targetTable != null) targetTable.Clear();

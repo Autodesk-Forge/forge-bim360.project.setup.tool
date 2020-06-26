@@ -159,6 +159,18 @@ namespace BimProjectSetupCommon
         #endregion
 
         #region Convert tables to objects
+        public static BimProject CustomGetBimProject(string projectName)
+        {
+            BimProject project = new BimProject();
+
+            project.name = projectName;
+            // Default values
+            project.project_type = "Office";
+            project.value = "0";
+            project.currency = "EUR";
+
+            return project;
+        }
         public static List<BimProject> GetBimProjects()
         {
             List<BimProject> projects = new List<BimProject>();

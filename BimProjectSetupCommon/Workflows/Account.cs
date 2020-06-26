@@ -30,7 +30,12 @@ namespace BimProjectSetupCommon.Workflow
             DataController.InitializeAccountUsers();
             DataController.InitializeCompanies();
         }
-
+        public void CustomAddAllCompanies(DataTable table, List<BimCompany> companies, int startRow)
+        {
+            Log.Info($"Adding companies...");
+            List<BimCompany> _companies = CustomGetCompanies(table, companies, startRow);
+            DataController.AddCompanies(_companies);
+        }
         public void AddCompaniesFromCsv()
         {
             Log.Info($"");
@@ -58,7 +63,61 @@ namespace BimProjectSetupCommon.Workflow
         {
             return DataController.AccountUsers;
         }
+        private List<BimCompany> CustomGetCompanies(DataTable table, List<BimCompany> companies, int startRow)
+        {
+            if (table == null)
+            {
+                return null;
+            }
 
+            List<BimCompany> resultCompanies = new List<BimCompany>();
+
+            // Create list with all existing company names
+            List<string> existingCompanies = new List<string>();
+            foreach (BimCompany existingCompany in companies)
+            {
+                existingCompanies.Add(existingCompany.name);
+            }
+
+            // Validate the data and convert
+            for (int row = startRow; row < table.Rows.Count; row++)
+            {
+                // Itterate until next project
+                if (!string.IsNullOrEmpty(table.Rows[row]["project_name"].ToString()) && row != startRow)
+                {
+                    break;
+                }
+
+                if (string.IsNullOrEmpty(table.Rows[row]["company"].ToString()))
+                {
+                    continue;
+                }
+
+                BimCompany newCompany = new BimCompany();
+
+                newCompany.name = Util.GetStringOrNull(table.Rows[row]["company"]);
+
+                // Default trade always Architecture
+                newCompany.trade = "Architecture";
+
+                bool isCompanyAdded = false;
+
+                // Check if company with same name has been already added
+                foreach (BimCompany company in resultCompanies)
+                {
+                    if (company.name == newCompany.name)
+                    {
+                        isCompanyAdded = true;
+                        break;
+                    }
+                }
+
+                // Add only if company had not been added already and company does not already exist
+                if (newCompany != null && !isCompanyAdded && !existingCompanies.Contains(newCompany.name)) resultCompanies.Add(newCompany);
+            }
+
+            return resultCompanies;
+        }
         private List<BimCompany> CompanyTableToList(DataTable input)
         {
             List<BimCompany> companies = new List<BimCompany>();

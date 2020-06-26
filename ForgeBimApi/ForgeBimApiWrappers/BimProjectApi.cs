@@ -63,6 +63,71 @@ namespace Autodesk.Forge.BIM360
         }
 
         /// <summary>
+        /// Gets all users in a project
+        /// </summary>
+        /// <param name="projectId">Id of the project</param>
+        /// <returns>IRestResponse object</returns>
+        public IRestResponse CustomGetProjectUsers(out List<HqUser> result, string projectId)
+        {
+            int limit = 100;
+            Log.Info($"Querying Users for AccountID '{options.ForgeBimAccountId}'");
+            result = new List<HqUser>();
+            List<HqUser> users;
+            IRestResponse response = null;
+            int offset = 0;
+            do
+            {
+                users = null;
+                try
+                {
+                    var request = new RestRequest(Method.GET);
+                    //request.Resource = "bim360/admin/v1/projects/{ProjectId}/users";
+                    request.Resource = Urls["projects_users"];
+                    request.AddParameter("ProjectId", projectId, ParameterType.UrlSegment);
+
+                    request.AddHeader("authorization", $"Bearer {Token}");
+                    request.AddParameter("limit", limit, ParameterType.QueryString);
+                    request.AddParameter("offset", offset, ParameterType.QueryString);
+
+                    response = ExecuteRequest(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        dynamic content = JsonConvert.DeserializeObject(response.Content);
+                        JsonSerializerSettings settings = new JsonSerializerSettings();
+                        settings.NullValueHandling = NullValueHandling.Ignore;
+                        users = JsonConvert.DeserializeObject<List<HqUser>>(content.results.ToString(), settings);
+                        result.AddRange(users);
+                        offset += limit;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex);
+                    throw ex;
+                }
+            }
+            while (users != null && users.Count == limit);
+
+            return response;
+        }
+
+        //var request = new RestRequest(Method.GET);
+        //    //request.Resource = "bim360/admin/v1/projects/{ProjectId}/users";
+        //    request.Resource = Urls["projects_users"];
+        //    request.AddParameter("ProjectId", projectId, ParameterType.UrlSegment);
+
+        //    request.AddHeader("cache-control", "no-cache");
+        //    request.AddHeader("authorization", $"Bearer {Token}");
+        //    request.AddHeader("content-type", ContentType);
+
+        //    JsonSerializerSettings settings = new JsonSerializerSettings();
+        //    settings.NullValueHandling = NullValueHandling.Ignore;
+
+        //    IRestResponse response = ExecuteRequest(request); // Client.Execute(request);
+        //    return response;
+        //}
+
+        /// <summary>
         /// Assigns an admin user and services to a project. Returns an error if that user is already assigned
         /// To update projects and add new services use PatchProjects instead
         /// </summary>

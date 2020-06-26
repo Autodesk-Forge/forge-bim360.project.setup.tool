@@ -33,7 +33,21 @@ namespace BimProjectSetupCommon.Workflow
         {
             DataController.InitializeAllProjects();
         }
+        public DataTable CustomGetDataFromCsv()
+        {
+            return CsvReader.CustomReadDataFromCSV();
+        }
+        public void CustomCreateProject(string projectName)
+        {
+            Console.WriteLine("\nCreating project: " + projectName + "\n");
 
+            BimProject newProject = DataController.CustomGetBimProject(projectName);
+            string response = DataController.AddProject(newProject);
+            if (response == "error")
+            {
+                throw new ApplicationException($"There was a problem creating project with name: " + projectName);
+            }
+        }
         public void CreateProjectsProcess()
         {
             try
@@ -53,6 +67,7 @@ namespace BimProjectSetupCommon.Workflow
                 Log.Error(ex);
             }
         }
+
         public void UpdateProjectsProcess()
         {
             try
@@ -101,11 +116,11 @@ namespace BimProjectSetupCommon.Workflow
                 CsvExporter.ExportProjectsCsv(bimProjects);
             }
         }
-
         public List<BimProject> GetAllProjects()
         {
             return DataController.AllProjects;
         }
+
         public List<string> GetIndustryRoles()
         {
             return DataController.GetIndustryRoles();
@@ -124,7 +139,6 @@ namespace BimProjectSetupCommon.Workflow
             }
             return _serviceTypes;
         }
-
         private void CreateProjects()
         {
             Log.Info("");
