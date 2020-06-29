@@ -47,6 +47,10 @@ namespace BimProjectSetupCommon.Workflow
             {
                 throw new ApplicationException($"There was a problem creating project with name: " + projectName);
             }
+
+            Log.Info("Waiting for the project to be fully created...");
+            // Wait for the top folders of the project to be automatically created -> important for next steps
+            System.Threading.Thread.Sleep(6000);
         }
         public void CreateProjectsProcess()
         {
