@@ -2,7 +2,6 @@
 
 ![Platforms](https://img.shields.io/badge/platform-Windows-lightgray.svg)
 ![.NET](https://img.shields.io/badge/.NET-4.6-blue.svg)
-[![CefSharp](https://img.shields.io/badge/CefSharp-57.0.0-blue.svg)](http://opensource.org/licenses/MIT)
 
 [![Data-Management](https://img.shields.io/badge/Data%20Management-v2-green.svg)](http://developer.autodesk.com/)
 [![BIM-360](https://img.shields.io/badge/BIM%20360-v1-green.svg)](http://developer.autodesk.com/)
@@ -24,7 +23,6 @@ Command line tool to setup BIM 360 projects, services, users, it includes the fo
 
 # Prerequisites
 - Visual Studio: Either Community (Windows) or Code (Windows, MacOS).
-- CefSharp: Chromium based browser control for .NET apps
 - .NET Framework basic knowledge with C#
 
 # Running locally
