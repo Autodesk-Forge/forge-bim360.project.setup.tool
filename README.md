@@ -19,6 +19,14 @@ Command line tool to setup BIM 360 projects, services, users, it includes the fo
 - Activate project services by adding project admin
 - Import users to project as admin or normal user
 
+### Custom functionalities based on CSV input file:
+ - Create projects with custom folder structure
+ - Add users to project with industry roles
+ - Add companies
+ - Add folder permissions to users
+ - Add folder permissions to roles
+ - Upload multiple files from local folders to BIM360 folders
+
 # Thumbnail
 ![thumbnail](/thumbnail.gif)
 
@@ -31,6 +39,22 @@ Command line tool to setup BIM 360 projects, services, users, it includes the fo
 - For using this sample, you need an Autodesk developer credentials. Visit the [Forge Developer Portal](https://developer.autodesk.com), sign up for an account, then [create an app](https://developer.autodesk.com/myapps/create). 
 - Connect your Forge App to a Specific BIM 360 Account, follow the [tutorial](https://forge.autodesk.com/en/docs/bim360/v1/tutorials/getting-started/get-access-to-account/)
 - Download the repository, open `BimProjectSetupTool.sln` Solution on Visual Studio. The build process should download the required packages (**Autodesk.Forge** and dependencies). Compile and build the project, run it, please check the [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for all the details about usage and preparation of csv files.
+
+# Hot to use Custom.bat
+- See the steps from 'Running locally' to build the project
+- Go to **.bin/Debug/sample** folder
+- Edit the **Custom.bat** file and add your details
+- There are two files **BIM360_Custom_Template**, one is a CSV-File and the other one an Excel-File
+- You can edit the Excel-File for your purpose and save it as CSV-File. You can also directy change the CSV-File. Remeber: **the program uses only the CSV-File, so be sure to have the information saved in this file before starting the program**.
+- After changing the BIM360_Custom_Template run the **Custom.bat** file
+- For information on what the program has done you can go to **.bin/Debug/Log** folder read the log files. **logImportant.txt** should be always checked as it provides information of default values or skipped parameters.
+- You will see an error if the CSV-File was not correctly populated. Specific information about the error will be printed on the console and will be saved in the log files.
+- For every run of the program the log files will be deleted so you can't see old log files, just the last ones.
+
+# Important notes on Custom.bat
+- If you just want to add users to a project delete all the information in the columns from "root_folder" to "role_permission", but don't delete the columns.
+- After running the programm it is still possible to add new information in the CSV-File and run the program again. Everything is checked and only the new information will be updated in BIM360.
+- Soon there will be a tutorial video with more information
 
 # Features
 ![features](./UseCases.png)
@@ -95,6 +119,7 @@ Note: These template files used in the scripts are just samples which are define
     - -d Date time format pattern(default = yyyy-MM-dd)
     - -r Trial run [true/false] (default = false)
     - -h BIM 360 Account admin Email address
+    - -f Directory path where local folders with data are stored
     - --CF Copy folders
     - --AR Admin Industry Role
     - --EU Use the EU region account
