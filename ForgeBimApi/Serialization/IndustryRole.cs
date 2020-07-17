@@ -28,7 +28,8 @@ namespace Autodesk.Forge.BIM360.Serialization
         public string id;
         public string project_id;
         public string name;        
-        public RolesServices service_types;
+        // Changed
+        public RolesServices services;
     }
 
     public class RolesServices
@@ -50,5 +51,6 @@ namespace Autodesk.Forge.BIM360.Serialization
     {
     }
 
-    public enum RolesAccessLevel { project_admin, project_user, no_access };
+    // Changed
+    public enum RolesAccessLevel { admin, user, no_access };
 }

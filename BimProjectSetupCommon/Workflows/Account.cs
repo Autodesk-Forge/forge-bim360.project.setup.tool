@@ -20,6 +20,7 @@ using System.Data;
 using System.Collections.Generic;
 using BimProjectSetupCommon.Helpers;
 using Autodesk.Forge.BIM360.Serialization;
+using System;
 
 namespace BimProjectSetupCommon.Workflow
 {
@@ -30,7 +31,18 @@ namespace BimProjectSetupCommon.Workflow
             DataController.InitializeAccountUsers();
             DataController.InitializeCompanies();
         }
+        public List<BimCompany> CustomUpdateCompanies(DataTable table, int startRow, AccountWorkflow accountProcess)
+        {
+            Util.LogInfo($"\nRetrieving companies...");
+            List<BimCompany>  companies = accountProcess.GetCompanies();
 
+            Util.LogInfo($"Adding companies...");
+            List<BimCompany> _companies = CustomGetCompanies(table, companies, startRow);
+            DataController.AddCompanies(_companies);
+
+            List<BimCompany> updatedCompanies = accountProcess.GetCompanies();
+            return updatedCompanies;
+        }
         public void AddCompaniesFromCsv()
         {
             Log.Info($"");
@@ -58,7 +70,161 @@ namespace BimProjectSetupCommon.Workflow
         {
             return DataController.AccountUsers;
         }
+        private List<BimCompany> CustomGetCompanies(DataTable table, List<BimCompany> companies, int startRow)
+        {
+            if (table == null)
+            {
+                return null;
+            }
 
+            List<BimCompany> resultCompanies = new List<BimCompany>();
+
+            // Create list with all existing company names
+            List<string> existingCompanies = new List<string>();
+            foreach (BimCompany existingCompany in companies)
+            {
+                existingCompanies.Add(existingCompany.name);
+            }
+            existingCompanies = existingCompanies.ConvertAll(d => d.ToLower());
+
+            for (int row = startRow; row < table.Rows.Count; row++)
+            {
+                // Itterate until next project
+                if (!string.IsNullOrEmpty(table.Rows[row]["project_name"].ToString()) && row != startRow)
+                {
+                    break;
+                }
+
+                if (string.IsNullOrEmpty(table.Rows[row]["company"].ToString()))
+                {
+                    continue;
+                }
+
+                BimCompany newCompany = new BimCompany();
+
+                newCompany.name = Util.GetStringOrNull(table.Rows[row]["company"]);
+
+                // Check if company with same name has been already added
+                bool isCompanyAdded = false;
+                foreach (BimCompany company in resultCompanies)
+                {
+                    if (company.name.ToLower() == newCompany.name.ToLower())
+                    {
+                        isCompanyAdded = true;
+                        break;
+                    }
+                }
+
+                // Check if there was a company with the same name already in the CSV-File
+                if (row > 0)
+                {
+                    for (int j = row - 1; j>=0; j--)
+                    {
+                        if(table.Rows[row]["company"].ToString() == table.Rows[j]["company"].ToString())
+                        {
+                            isCompanyAdded = true;
+                            if (!string.IsNullOrEmpty(table.Rows[row]["company_trade"].ToString()))
+                            {
+                                Util.LogImportant($"Company '{table.Rows[row]["company"]}' has already been added. Company trade is taken only from the first occurrence of the company.");
+                            }
+                        }
+                    }
+                }
+
+                if (!isCompanyAdded)
+                {
+                    string trade = Util.GetStringOrNull(table.Rows[row]["company_trade"]);
+                    List<string> allowedTrades = GetTrades();
+
+                    allowedTrades = allowedTrades.ConvertAll(d => d.ToLower());
+
+                    if (!allowedTrades.Contains(trade.ToLower()))
+                    {
+                        trade = "Architecture";
+                        Util.LogImportant($"The given company trade '{table.Rows[row]["company_trade"]}' for company '{newCompany.name}' is not recognized. The default trade '{trade}' will be used. For reference see row number {row + 2} in the CSV-File.");
+                    }
+
+                    newCompany.trade = trade;
+
+                    // Add only if company had not been added already and company does not already exist
+                    if (newCompany != null && !isCompanyAdded && !existingCompanies.Contains(newCompany.name.ToLower())) resultCompanies.Add(newCompany);
+                }
+            }
+
+            return resultCompanies;
+        }
+        private List<string> GetTrades()
+        {
+            List<string> trades = new List<string>();
+            trades.Add("Architecture");
+            trades.Add("Communications");
+            trades.Add("Communications | Data");
+            trades.Add("Concrete");
+            trades.Add("Concrete | Cast-in-Place");
+            trades.Add("Concrete | Precast");
+            trades.Add("Construction Management");
+            trades.Add("Conveying Equipment");
+            trades.Add("Conveying Equipment | Elevators");
+            trades.Add("Demolition");
+            trades.Add("Earthwork");
+            trades.Add("Earthwork | Site Excavation & Grading");
+            trades.Add("Electrical");
+            trades.Add("Electrical Power Generation");
+            trades.Add("Electronic Safety & Security");
+            trades.Add("Equipment");
+            trades.Add("Equipment | Kitchen Appliances");
+            trades.Add("Exterior Improvements");
+            trades.Add("Exterior | Fences & Gates");
+            trades.Add("Exterior | Landscaping");
+            trades.Add("Exterior | Irrigation");
+            trades.Add("Finishes");
+            trades.Add("Finishes | Carpeting");
+            trades.Add("Finishes | Ceiling");
+            trades.Add("Finishes | Drywall");
+            trades.Add("Finishes | Flooring");
+            trades.Add("Finishes | Painting & Coating");
+            trades.Add("Finishes | Tile");
+            trades.Add("Fire Suppression");
+            trades.Add("Furnishings");
+            trades.Add("Furnishings | Casework & Cabinets");
+            trades.Add("Furnishings | Countertops");
+            trades.Add("Furnishings | Window Treatments");
+            trades.Add("General Contractor");
+            trades.Add("HVAC Heating, Ventilating, & Air Conditioning");
+            trades.Add("Industry-Specific Manufacturing Processing");
+            trades.Add("Integrated Automation");
+            trades.Add("Masonry");
+            trades.Add("Material Processing & Handling Equipment");
+            trades.Add("Metals");
+            trades.Add("Metals | Structural Steel / Framing");
+            trades.Add("Moisture Protection");
+            trades.Add("Moisture Protection | Roofing");
+            trades.Add("Moisture Protection | Waterproofing");
+            trades.Add("Openings");
+            trades.Add("Openings | Doors & Frames");
+            trades.Add("Openings | Entrances & Storefronts");
+            trades.Add("Openings | Glazing");
+            trades.Add("Openings | Roof Windows & Skylights");
+            trades.Add("Openings | Windows");
+            trades.Add("Owner");
+            trades.Add("Plumbing");
+            trades.Add("Pollution & Waste Control Equipment");
+            trades.Add("Process Gas & Liquid Handling, Purification, & Storage Equipment");
+            trades.Add("Process Heating, Cooling, & Drying Equipment");
+            trades.Add("Process Integration");
+            trades.Add("Process Integration | Piping");
+            trades.Add("Special Construction");
+            trades.Add("Specialties");
+            trades.Add("Specialties | Signage");
+            trades.Add("Utilities");
+            trades.Add("Water & Wastewater Equipment");
+            trades.Add("Waterway & Marine Construction");
+            trades.Add("Wood & Plastics");
+            trades.Add("Wood & Plastics | Millwork");
+            trades.Add("Wood & Plastics | Rough Carpentry");
+
+            return trades;
+        }
         private List<BimCompany> CompanyTableToList(DataTable input)
         {
             List<BimCompany> companies = new List<BimCompany>();

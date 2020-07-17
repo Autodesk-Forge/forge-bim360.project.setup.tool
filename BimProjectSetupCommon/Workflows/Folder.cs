@@ -17,6 +17,7 @@
 /////////////////////////////////////////////////////////////////////
 
 using System;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
@@ -47,6 +48,42 @@ namespace BimProjectSetupCommon.Workflow
             DataController.InitializeCompanies();
             DataController.InitializeAccountUsers();
             DataController.InitializeHubs();
+        }
+        public List<NestedFolder> CustomGetFolderStructure(BimProject project)
+        {
+            return CustomExtractFolderStructure(project);
+        }
+        public string CustomCreateFolder(string projId, string parentFolderId, string newFolderName)
+        {
+            return _foldersApi.CustomCreateFolder(projId, parentFolderId, newFolderName);
+        }
+        public bool CustomAssignPermissionToFolder(string projectId, string folderId, List<FolderPermission> folderPermissions)
+        {
+            return _foldersApi.CustomAssignPermission(projectId, folderId, folderPermissions);
+        }
+
+        public void CustomUploadFile(string projectId, string folderId,  string filePath)
+        {
+            Util.LogInfo("Uploading file " + System.IO.Path.GetFileName(filePath) + "...");
+
+            string objectId = _foldersApi.CustomCreateStorageLocation(projectId, folderId, filePath);
+            _foldersApi.CustomUploadFile(objectId, filePath);
+            _foldersApi.CustomCreateFirstVersion(projectId, folderId, objectId, filePath);
+
+        }
+
+        public List<string> CustomGetExistingFileNames(string projectId, string folderId)
+        {
+            List<string> fileNames = new List<string>();
+
+            IList<Data> existingFiles = _foldersApi.GetItems(projectId, folderId);
+
+            foreach (Data file in existingFiles)
+            {
+                fileNames.Add(file.attributes.displayName);
+            }
+
+            return fileNames;
         }
 
         public void CopyFoldersProcess()
@@ -150,7 +187,95 @@ namespace BimProjectSetupCommon.Workflow
             }
         }
 
-        private void ExtractFolderStructure(BimProject orgProj)
+        private List<NestedFolder> CustomExtractFolderStructure(BimProject orgProj)
+        {
+            if (!folderStructures.ContainsKey(orgProj.name))
+            {
+                List<NestedFolder> existingFolderStructure = new List<NestedFolder>();
+
+                Util.LogInfo($"");
+                Util.LogInfo($"Folder structure extraction started");
+                Util.LogInfo("- retrieving top folders from " + orgProj.id);
+
+                // call TopFolder to get the initial folder ids to start
+                TopFolderResponse topFolderRes = GetTopFolders(orgProj.id);
+
+                if (!CustomRootFoldersExist(topFolderRes))
+                {
+                    Util.LogInfo("No top folders retrieved.");
+
+                    // Wait until new project's folders are created
+                    for(int i=0; i<6; i++)
+                    {
+                        Util.LogInfo("Waiting for project's folders to be created...");
+
+                        Thread.Sleep(5000);
+                        topFolderRes = GetTopFolders(orgProj.id);
+
+                        if (CustomRootFoldersExist(topFolderRes))
+                        {
+                            break;
+                        }
+                    }
+                    if (!CustomRootFoldersExist(topFolderRes))
+                    {
+                        Util.LogError($"There was a problem retrievieng root folders for project {orgProj.name}. The program has been stopped. Try running the program again.");
+                        throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
+                    }
+                }
+
+                Util.LogInfo("- retrieving sub-folders for 'Plans' and 'Project Files' folder. This could take a while..");
+                // Iterate root folders
+                foreach (Folder folder in topFolderRes.data)
+                {
+                    string folderName = folder.attributes.name;
+                    if (folderName == "Project Files" || folderName == "Plans")
+                    {
+                        NestedFolder rootFolder = new NestedFolder(folderName, folder.id);
+
+                        // recursive calls to fetch folder structure
+                        NestedFolder rootWithChildrenFolder = _foldersApi.GetFoldersHierarchy(orgProj.id, rootFolder);
+                        existingFolderStructure.Add(rootWithChildrenFolder);
+                    }
+                }
+                folderStructures[orgProj.name] = existingFolderStructure;
+
+                return existingFolderStructure;
+
+            } else
+            {
+                throw new ApplicationException($"");
+            }
+        }
+        private bool CustomRootFoldersExist(TopFolderResponse topFolderRes)
+        {
+            if (topFolderRes.data == null)
+            {
+                return false;
+            }
+            bool plansExist = false;
+            bool projectFilesExist = false;
+            for (int i = 0; i < topFolderRes.data.Length; i++)
+            {
+                if (topFolderRes.data[i].attributes.name.ToLower() == "plans")
+                {
+                    plansExist = true;
+                }
+                if (topFolderRes.data[i].attributes.name.ToLower() == "project files")
+                {
+                    projectFilesExist = true;
+                }
+            }
+            if(!plansExist || !projectFilesExist)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+            private void ExtractFolderStructure(BimProject orgProj)
         {
             if (folderStructures.ContainsKey(orgProj.name))
             {

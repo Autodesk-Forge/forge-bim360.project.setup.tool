@@ -33,7 +33,26 @@ namespace BimProjectSetupCommon.Workflow
         {
             DataController.InitializeAllProjects();
         }
+        public DataTable CustomGetDataFromCsv()
+        {
+            return CsvReader.CustomReadDataFromCSV();
+        }
+        public List<BimProject> CustomCreateProject(DataTable table, int row, string projectName, ProjectWorkflow projectProcess)
+        {
+            Util.LogInfo("\nCreating project: " + projectName + "\n");
 
+            BimProject newProject = DataController.CustomGetBimProject(table, row, projectName);
+            string response = DataController.AddProject(newProject);
+            if (response == "error")
+            {
+                Util.LogError($"There was a problem creating project with name: {projectName}. The program has been stopped.");
+                throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
+            }
+
+            List <BimProject> updatedProjects = projectProcess.GetAllProjects();
+
+            return updatedProjects;
+        }
         public void CreateProjectsProcess()
         {
             try
@@ -53,6 +72,7 @@ namespace BimProjectSetupCommon.Workflow
                 Log.Error(ex);
             }
         }
+
         public void UpdateProjectsProcess()
         {
             try
@@ -101,11 +121,11 @@ namespace BimProjectSetupCommon.Workflow
                 CsvExporter.ExportProjectsCsv(bimProjects);
             }
         }
-
         public List<BimProject> GetAllProjects()
         {
             return DataController.AllProjects;
         }
+
         public List<string> GetIndustryRoles()
         {
             return DataController.GetIndustryRoles();
@@ -124,7 +144,6 @@ namespace BimProjectSetupCommon.Workflow
             }
             return _serviceTypes;
         }
-
         private void CreateProjects()
         {
             Log.Info("");

@@ -29,6 +29,7 @@ namespace BimProjectSetupCommon
         public string FilePath { get; set; }
         public string ServiceFilePath { get; set; }
         public string ProjectUserFilePath { get; set; }
+        public string LocalFoldersPath { get; set; }
         public string CompanyFilePath { get; set; }
         public string AccountUserFilePath { get; set; }
         public string ForgeClientId { get; private set; }
@@ -124,6 +125,10 @@ namespace BimProjectSetupCommon
                 else if (arg.Equals("-u", StringComparison.InvariantCultureIgnoreCase))
                 {
                     options.ProjectUserFilePath = args[++i];
+                }
+                else if (arg.Equals("-f", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    options.LocalFoldersPath = args[++i];
                 }
                 else if (arg.Equals("-c", StringComparison.InvariantCultureIgnoreCase))
                 {

@@ -111,6 +111,7 @@ namespace Autodesk.Forge.BIM360
 
             Urls["projects"] = "hq/v1/" + regionBasedUrl + "accounts/{AccountId}/projects";
             Urls["projects_projectId"] = "hq/v1/" + regionBasedUrl + "accounts/{AccountId}/projects/{ProjectId}";
+            Urls["projects_users"] = "bim360/admin/v1/" + regionBasedUrl + "projects/{ProjectId}/users";
             Urls["projects_projectId_users"] = "hq/v1/" + regionBasedUrl + "accounts/{AccountId}/projects/{ProjectId}/users";
             Urls["projects_projectId_users_import"] = "hq/v2/" + regionBasedUrl + "accounts/{AccountId}/projects/{ProjectId}/users/import";
             Urls["projects_projectId_industryRoles"] = "hq/v2/" + regionBasedUrl + "accounts/{AccountId}/projects/{ProjectId}/industry_roles";
@@ -120,6 +121,9 @@ namespace Autodesk.Forge.BIM360
             Urls["users_import"] = "hq/v1/" + regionBasedUrl + "accounts/{AccountId}/users/import";
             Urls["businessUnitsStructure"] = "hq/v1/" + regionBasedUrl + "accounts/{AccountId}/business_units_structure";
             Urls["folders_folder_contents"] = "data/v1/projects/{ProjectId}/folders/{FolderId}/contents";
+            Urls["folders_folder_storage"] = "data/v1/projects/{ProjectId}/storage";
+            Urls["objects_upload"] = "oss/v2/buckets/{BucketKey}/objects/{ObjectName}";
+            Urls["items_version"] = "data/v1/projects/{ProjectId}/items";
             Urls["hubs"] = "project/v1/hubs";
             Urls["hubs_hubId"] = "project/v1/hubs/{HubId}";
             Urls["hubs_topfolders"] = "project/v1/hubs/{HubId}/projects/{ProjectId}/topFolders";

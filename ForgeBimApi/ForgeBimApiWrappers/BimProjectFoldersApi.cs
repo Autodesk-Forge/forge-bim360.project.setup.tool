@@ -21,12 +21,14 @@ using System.Net;
 using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 using RestSharp;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using Autodesk.Forge.BIM360.Serialization;
+using System.Collections;
 
 namespace Autodesk.Forge.BIM360
 {
@@ -105,6 +107,49 @@ namespace Autodesk.Forge.BIM360
             }
         } // GetSubFolders()
 
+        public void CustomUploadFile(string objectId, string filePath)
+        {
+            int n = "urn:adsk.objects:os.object:".Length;
+            int m = objectId.IndexOf('/');
+            string bucketKey = objectId.Substring(n, m - n);
+            string objectName = objectId.Substring(m + 1, objectId.Length - m - 1);
+            
+             byte[] bytes = System.IO.File.ReadAllBytes(filePath);
+
+            var request = new RestRequest(Method.PUT);
+
+            // "oss/v2/buckets/{BucketKey}/objects/{ObjectName}"
+            request.Resource = Urls["objects_upload"];
+
+            request.AddParameter("BucketKey", bucketKey, ParameterType.UrlSegment);
+            request.AddParameter("ObjectName", objectName, ParameterType.UrlSegment);
+            request.AddHeader("Authorization", "Bearer " + Token);
+            request.AddParameter("application/octect-stream", bytes, ParameterType.RequestBody);
+
+            IRestResponse response = ExecuteRequest(request);
+        }
+
+        public void CustomCreateFirstVersion(string projectId, string folderId, string objectId, string filePath)
+        {
+            string fileName = System.IO.Path.GetFileName(filePath);
+
+            if (projectId.StartsWith("b.") == false)
+            {
+                projectId = "b." + projectId;
+            }
+
+            var request = new RestRequest(Method.POST);
+
+            // "data/v1/projects/{ProjectId}/items"
+            request.Resource = Urls["items_version"];
+
+            request.AddParameter("ProjectId", projectId, ParameterType.UrlSegment);
+            request.AddHeader("Authorization", "Bearer " + Token);
+            request.AddHeader("Content-Type", "application/vnd.api+json");
+            request.AddParameter("application/vnd.api+json", CustomFirstVersionJsonBody(fileName, folderId, objectId), ParameterType.RequestBody);
+
+            IRestResponse response = ExecuteRequest(request);
+        }
         public IList<Data> GetItems(string projectId, string folderId)
         {
             if (projectId.StartsWith("b.") == false)
@@ -342,9 +387,6 @@ namespace Autodesk.Forge.BIM360
             }
             return response;
         }
-
-
-
         /// <summary>
         /// Iterate through a passed in path 
         /// </summary>
@@ -389,7 +431,80 @@ namespace Autodesk.Forge.BIM360
 
             return GetBranchFolder(hubId, projectId, childFolder.id, fullPath, currentPath + "/" + childFolder.attributes.displayName);
         }
+        public string CustomCreateStorageLocation(string projectId, string folderId, string filePath)
+        {
+            string fileName = System.IO.Path.GetFileName(filePath);
 
+            if (projectId.StartsWith("b.") == false)
+            {
+                projectId = "b." + projectId;
+            }
+
+            var request = new RestRequest(Method.POST);
+
+            // "data/v1/projects/" + projectId + "/folders"
+            request.Resource = Urls["folders_folder_storage"];
+
+            request.AddParameter("ProjectId", projectId, ParameterType.UrlSegment);
+            request.AddHeader("Authorization", "Bearer " + Token);
+            request.AddHeader("Content-Type", "application/vnd.api+json");
+            request.AddParameter("application/vnd.api+json", CustomCreateStorageJsonBody(fileName, folderId), ParameterType.RequestBody);
+
+            IRestResponse response = ExecuteRequest(request);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.Created)
+            {
+                return "error";
+            }
+
+            JsonSerializerSettings jss = new JsonSerializerSettings();
+            jss.NullValueHandling = NullValueHandling.Ignore;
+
+            CreateFolderResponse jsonResponse =
+                JsonConvert.DeserializeObject<CreateFolderResponse>(response.Content, jss);
+
+            string objectId = jsonResponse.data.id;
+
+            return objectId;
+        }
+
+
+
+        public string CustomCreateFolder(string projectId, string parentFolderId, string newFolderName)
+        {
+            if (projectId.StartsWith("b.") == false)
+            {
+                projectId = "b." + projectId;
+            }
+
+            var request = new RestRequest(Method.POST);
+
+            // "data/v1/projects/" + projectId + "/folders"
+            request.Resource = string.Format("{0}{1}/folders",
+                                              "data/v1/projects/",
+                                              projectId);
+
+            request.AddHeader("Authorization", "Bearer " + Token);
+            request.AddHeader("Content-Type", "application/vnd.api+json");
+            request.AddParameter("application/vnd.api+json", createFolderJsonBody(newFolderName, parentFolderId), ParameterType.RequestBody);
+
+            IRestResponse response = ExecuteRequest(request);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.Created)
+            {
+                return "error";
+            }
+
+            JsonSerializerSettings jss = new JsonSerializerSettings();
+            jss.NullValueHandling = NullValueHandling.Ignore;
+
+            CreateFolderResponse jsonResponse =
+                JsonConvert.DeserializeObject<CreateFolderResponse>(response.Content, jss);
+
+            string newFolderId = jsonResponse.data.id;
+
+            return newFolderId;
+        }
         /// <summary>
         /// Creates a new folder
         /// </summary>
@@ -434,8 +549,30 @@ namespace Autodesk.Forge.BIM360
 
             return newFolderId;
         }
+        public bool CustomAssignPermission(string projectId, string folderId, List<FolderPermission> folderPermissions)
+        {
+            if (projectId.StartsWith("b.") == true)
+            {
+                projectId = projectId.Remove(0, 2);
+            }
 
+            var request = new RestRequest(Method.POST);
+            request.Resource = Urls["folder_permission_create"];
+            request.AddParameter("ProjectId", projectId, ParameterType.UrlSegment);
+            request.AddParameter("FolderId", folderId, ParameterType.UrlSegment);
 
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.NullValueHandling = NullValueHandling.Ignore;
+            string permissionsString = JsonConvert.SerializeObject(folderPermissions, settings);
+            request.AddParameter("application/json", permissionsString, ParameterType.RequestBody);
+
+            request.AddHeader("Authorization", "Bearer " + Token);
+            request.AddHeader("Content-Type", "application/json");
+
+            IRestResponse response = ExecuteRequest(request);
+
+            return response.StatusCode == System.Net.HttpStatusCode.OK;
+        }
         /// <summary>
         /// Assign only role permission to a specified folder
         /// </summary>
@@ -476,7 +613,90 @@ namespace Autodesk.Forge.BIM360
             return response.StatusCode == System.Net.HttpStatusCode.OK;
         }
 
+        private string CustomFirstVersionJsonBody(string fileName, string folderId, string objectId)
+        {
+            string jsonBody = @"
+            { 
+                ""jsonapi"": {
+                    ""version"": ""1.0""
+                },
+                ""data"": {
+		            ""type"": ""items"",
+		            ""attributes"": {
+			            ""displayName"": """ + fileName + @""",
+			            ""extension"": {
+                            ""type"": ""items:autodesk.bim360:File"",
+                            ""version"": ""1.0""
+                        }
+		            },
+		            ""relationships"": {
+                        ""tip"": {
+                            ""data"": {
+                                ""type"": ""versions"",
+                                ""id"": ""1""
+                            }
+                        },
+                        ""parent"": {
+                            ""data"": {
+                                ""type"": ""folders"",
+                                ""id"": """ + folderId + @"""
+                            }
+                        }
+		            }
+                },
+                ""included"": [
+                    {
+                        ""type"": ""versions"",
+                        ""id"": ""1"",
+                        ""attributes"": {
+                            ""name"": """ + fileName + @""",
+                            ""extension"": {
+                                ""type"": ""versions:autodesk.bim360:File"",
+                                ""version"": ""1.0""
+                            }
+                        },
+                        ""relationships"": {
+                            ""storage"": {
+                                ""data"": {
+                                    ""type"": ""objects"",
+                                    ""id"": """ + objectId + @"""
+                                }
+                            }
+                        }
+                    }
+                ]
+            }";
 
+            string jsonBodyWoutControlChars = new string(jsonBody.Where(c => !char.IsControl(c)).ToArray());
+            return jsonBodyWoutControlChars;
+        }
+
+        private string CustomCreateStorageJsonBody(string fileName, string folderId)
+        {
+            string jsonBody = @"
+            { 
+                ""jsonapi"": {
+                    ""version"": ""1.0""
+                },
+                ""data"": {
+		            ""type"": ""objects"",
+		            ""attributes"": {
+			            ""name"": """ + fileName + @"""
+		            },
+		            ""relationships"": {
+                        ""target"": {
+                            ""data"": {
+                                ""type"": ""folders"",
+                                ""id"": """ + folderId + @"""
+                            }
+                        }
+		            }
+                },
+            }";
+
+            string jsonBodyWoutControlChars = new string(jsonBody.Where(c => !char.IsControl(c)).ToArray());
+            return jsonBodyWoutControlChars;
+        }
 
         /// <summary>
         /// This provides the JSON body content for the CreateFolder command.  Since only two paramters change and the
