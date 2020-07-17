@@ -37,20 +37,21 @@ namespace BimProjectSetupCommon.Workflow
         {
             return CsvReader.CustomReadDataFromCSV();
         }
-        public void CustomCreateProject(string projectName)
+        public List<BimProject> CustomCreateProject(DataTable table, int row, string projectName, ProjectWorkflow projectProcess)
         {
-            Console.WriteLine("\nCreating project: " + projectName + "\n");
+            Util.LogInfo("\nCreating project: " + projectName + "\n");
 
-            BimProject newProject = DataController.CustomGetBimProject(projectName);
+            BimProject newProject = DataController.CustomGetBimProject(table, row, projectName);
             string response = DataController.AddProject(newProject);
             if (response == "error")
             {
-                throw new ApplicationException($"There was a problem creating project with name: " + projectName);
+                Util.LogError($"There was a problem creating project with name: {projectName}. The program has been stopped.");
+                throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
             }
 
-            Log.Info("Waiting for the project to be fully created...");
-            // Wait for the top folders of the project to be automatically created -> important for next steps
-            System.Threading.Thread.Sleep(6000);
+            List <BimProject> updatedProjects = projectProcess.GetAllProjects();
+
+            return updatedProjects;
         }
         public void CreateProjectsProcess()
         {

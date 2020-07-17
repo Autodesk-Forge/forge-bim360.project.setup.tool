@@ -22,7 +22,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using RestSharp;
 using NLog;
-
+using System.IO;
 
 namespace BimProjectSetupCommon.Helpers
 {
@@ -83,6 +83,49 @@ namespace BimProjectSetupCommon.Helpers
                 result = Regex.IsMatch(name, DefaultConfig.invalidChars2);
             }
             return !result;
+        }
+
+        public static void LogInfo(string logMessage)
+        {
+            Console.WriteLine(logMessage);
+
+            using (StreamWriter w = File.AppendText("Log/logInfo.txt"))
+            {
+                w.WriteLine(logMessage);
+            }
+        }
+        public static void LogImportant(string logMessage)
+        {
+            System.Console.ForegroundColor = System.ConsoleColor.Yellow;
+            Console.WriteLine(logMessage);
+            System.Console.ResetColor();
+
+            using (StreamWriter w = File.AppendText("Log/logInfo.txt"))
+            {
+                w.WriteLine(logMessage);
+            }
+
+            using (StreamWriter w = File.AppendText("Log/logImportant.txt"))
+            {
+                w.WriteLine($" - {logMessage}\n");
+            }
+        }
+
+        public static void LogError(string logMessage)
+        {
+            System.Console.ForegroundColor = System.ConsoleColor.Red;
+            Console.WriteLine(logMessage);
+            System.Console.ResetColor();
+
+            using (StreamWriter w = File.AppendText("Log/logInfo.txt"))
+            {
+                w.WriteLine(logMessage);
+            }
+
+            using (StreamWriter w = File.AppendText("Log/logImportant.txt"))
+            {
+                w.WriteLine($" - {logMessage}\n");
+            }
         }
     }
 }

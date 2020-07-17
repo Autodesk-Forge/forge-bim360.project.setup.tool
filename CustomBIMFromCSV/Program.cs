@@ -5,6 +5,7 @@ using static CustomBIMFromCSV.Tools;
 
 using BimProjectSetupCommon;
 using BimProjectSetupCommon.Workflow;
+using BimProjectSetupCommon.Helpers;
 
 using Autodesk.Forge.BIM360.Serialization;
 
@@ -14,7 +15,10 @@ namespace CustomBIMFromCSV
     {
         static void Main(string[] args)
         {
-            // Get options from command line arguments
+            // Delete previous versions of log.txt
+            System.IO.File.Delete("Log/logInfo.txt");
+            System.IO.File.Delete("Log/logImportant.txt");
+            
             AppOptions options = AppOptions.Parse(args);
 
             ProjectWorkflow projectProcess = new ProjectWorkflow(options);
@@ -29,48 +33,36 @@ namespace CustomBIMFromCSV
             BimProject currentProject = null;
             List<HqUser> projectUsers = null;
             List<NestedFolder> folders = null;
-            List<NestedFolder> currentFolders = new List<NestedFolder>(); // One folder for each root folder
+            NestedFolder currentFolder = null;
 
-            // Itterate each row of the CSV-File
             for (int row = 0; row < csvData.Rows.Count; row++)
             {
-                bool isUserAtRow = !string.IsNullOrEmpty(csvData.Rows[row]["user_email"].ToString());
-
                 string projectName = csvData.Rows[row]["project_name"].ToString();
-                // Find project or create one if not exists
+                
                 if (!string.IsNullOrEmpty(projectName))
                 {
+                    Util.LogImportant($"\nCurrent project: {projectName}");
+
                     currentProject = projects.Find(x => x.name == projectName);
 
                     if (currentProject == null)
                     {
-                        projectProcess.CustomCreateProject(projectName);
-                        projects = projectProcess.GetAllProjects(); // Update after creation
+                        projects = projectProcess.CustomCreateProject(csvData, row, projectName, projectProcess);
 
                         currentProject = projects.Find(x => x.name == projectName);
                         CheckProjectCreated(currentProject, projectName);
-
-                    } 
-
-                    companies = accountProcess.GetCompanies();
-                    accountProcess.CustomAddAllCompanies(csvData, companies, row);
-                    companies = accountProcess.GetCompanies(); // Update after creation
-
-                    projectUsers = projectUserProcess.CustomGetAllProjectUsers(currentProject.id);
-                    projectUserProcess.CustomAddAllProjectUsers(csvData, projectUsers, companies, currentProject.name, row);
-                    projectUsers = projectUserProcess.CustomGetAllProjectUsers(currentProject.id); // Update after creation
+                    }
 
                     folders = folderProcess.CustomGetFolderStructure(currentProject);
-                    CheckRootsExist(folders);
 
-                    row = AssignPermissionToRootFolders(csvData, row, isUserAtRow, projectUsers, folderProcess, folders, currentProject.id);
+                    companies = accountProcess.CustomUpdateCompanies(csvData, row, accountProcess);
 
-                    isUserAtRow = !string.IsNullOrEmpty(csvData.Rows[row]["user_email"].ToString());  // Update for this row
-                    
+                    projectUsers = projectUserProcess.CustomUpdateProjectUsers(csvData, row, companies, currentProject, projectUserProcess);
                 }
 
-                currentFolders = CreateFoldersAndAssignPermissions(csvData, row, isUserAtRow, projectUsers, folderProcess, folders, currentFolders, currentProject.id);
+                currentFolder = CreateFoldersAndAssignPermissions(csvData, row, projectUsers, folderProcess, folders, currentFolder, currentProject, projectUserProcess);
 
+                UploadFilesFromFolder(csvData, row, folderProcess, currentFolder, currentProject.id, options.LocalFoldersPath);
             }
         }
     }

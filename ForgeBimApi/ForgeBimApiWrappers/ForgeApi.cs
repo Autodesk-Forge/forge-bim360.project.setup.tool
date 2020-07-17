@@ -121,6 +121,9 @@ namespace Autodesk.Forge.BIM360
             Urls["users_import"] = "hq/v1/" + regionBasedUrl + "accounts/{AccountId}/users/import";
             Urls["businessUnitsStructure"] = "hq/v1/" + regionBasedUrl + "accounts/{AccountId}/business_units_structure";
             Urls["folders_folder_contents"] = "data/v1/projects/{ProjectId}/folders/{FolderId}/contents";
+            Urls["folders_folder_storage"] = "data/v1/projects/{ProjectId}/storage";
+            Urls["objects_upload"] = "oss/v2/buckets/{BucketKey}/objects/{ObjectName}";
+            Urls["items_version"] = "data/v1/projects/{ProjectId}/items";
             Urls["hubs"] = "project/v1/hubs";
             Urls["hubs_hubId"] = "project/v1/hubs/{HubId}";
             Urls["hubs_topfolders"] = "project/v1/hubs/{HubId}/projects/{ProjectId}/topFolders";

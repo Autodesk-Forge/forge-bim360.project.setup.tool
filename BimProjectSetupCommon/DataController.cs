@@ -159,17 +159,96 @@ namespace BimProjectSetupCommon
         #endregion
 
         #region Convert tables to objects
-        public static BimProject CustomGetBimProject(string projectName)
+        public static BimProject CustomGetBimProject(DataTable table, int row, string projectName)
         {
             BimProject project = new BimProject();
 
+            string projectType = table.Rows[row]["project_type"].ToString();
+
+            if (!string.IsNullOrEmpty(projectType))
+            {
+                List<string> projectTypes = GetProjectTypes();
+                projectTypes = projectTypes.ConvertAll(d => d.ToLower());
+
+                if (!projectTypes.Contains(projectType.ToLower()))
+                {
+                    // Default type
+                    projectType = "Commercial";
+                    Util.LogImportant($"The given project type for project '{projectName}' is not recognized. Default project type '{projectType}' " +
+                        $"will be used. Please check the allowed project types! For reference see row number {row + 2} in the CSV-File.");
+                }
+            }
+
             project.name = projectName;
+            project.project_type = projectType;
+
             // Default values
-            project.project_type = "Office";
             project.value = "0";
             project.currency = "EUR";
 
             return project;
+        }
+        internal static List<string> GetProjectTypes()
+        {
+            List<string> projectTypes = new List<string>();
+            projectTypes.Add("Commercial");
+            projectTypes.Add("Convention Center");
+            projectTypes.Add("Data Center");
+            projectTypes.Add("Hotel / Motel");
+            projectTypes.Add("Office");
+            projectTypes.Add("Parking Structure / Garage");
+            projectTypes.Add("Performing Arts");
+            projectTypes.Add("Retail");
+            projectTypes.Add("Stadium/Arena");
+            projectTypes.Add("Theme Park");
+            projectTypes.Add("Warehouse (non-manufacturing)");
+            projectTypes.Add("Healthcare");
+            projectTypes.Add("Assisted Living / Nursing Home");
+            projectTypes.Add("Hospital");
+            projectTypes.Add("Medical Laboratory");
+            projectTypes.Add("Medical Office");
+            projectTypes.Add("OutPatient Surgery Center");
+            projectTypes.Add("Institutional");
+            projectTypes.Add("Court House");
+            projectTypes.Add("Dormitory");
+            projectTypes.Add("Education Facility");
+            projectTypes.Add("Government Building");
+            projectTypes.Add("Library");
+            projectTypes.Add("Military Facility");
+            projectTypes.Add("Museum");
+            projectTypes.Add("Prison / Correctional Facility");
+            projectTypes.Add("Recreation Building");
+            projectTypes.Add("Religious Building");
+            projectTypes.Add("Research Facility / Laboratory");
+            projectTypes.Add("Residential");
+            projectTypes.Add("Multi-Family Housing");
+            projectTypes.Add("Single-Family Housing");
+            projectTypes.Add("Infrastructure");
+            projectTypes.Add("Airport");
+            projectTypes.Add("Canal / Waterway");
+            projectTypes.Add("Dams / Flood Control / Reservoirs");
+            projectTypes.Add("Harbor / River Development");
+            projectTypes.Add("Rail");
+            projectTypes.Add("Seaport");
+            projectTypes.Add("Streets / Roads / Highways");
+            projectTypes.Add("Transportation Building");
+            projectTypes.Add("Tunnel");
+            projectTypes.Add("Waste Water / Sewers");
+            projectTypes.Add("Water Supply");
+            projectTypes.Add("Industrial & Energy");
+            projectTypes.Add("Manufacturing / Factory");
+            projectTypes.Add("Oil & Gas");
+            projectTypes.Add("Plant");
+            projectTypes.Add("Power Plant");
+            projectTypes.Add("Solar Far");
+            projectTypes.Add("Utilities");
+            projectTypes.Add("Wind Farm");
+            projectTypes.Add("Sample Projects");
+            projectTypes.Add("Demonstration Project");
+            projectTypes.Add("Template Project");
+            projectTypes.Add("Training Project");
+
+            return projectTypes;
         }
         public static List<BimProject> GetBimProjects()
         {

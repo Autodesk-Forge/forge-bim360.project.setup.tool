@@ -62,6 +62,29 @@ namespace BimProjectSetupCommon.Workflow
             return _foldersApi.CustomAssignPermission(projectId, folderId, folderPermissions);
         }
 
+        public void CustomUploadFile(string projectId, string folderId,  string filePath)
+        {
+            Util.LogInfo("Uploading file " + System.IO.Path.GetFileName(filePath) + "...");
+
+            string objectId = _foldersApi.CustomCreateStorageLocation(projectId, folderId, filePath);
+            _foldersApi.CustomUploadFile(objectId, filePath);
+            _foldersApi.CustomCreateFirstVersion(projectId, folderId, objectId, filePath);
+
+        }
+
+        public List<string> CustomGetExistingFileNames(string projectId, string folderId)
+        {
+            List<string> fileNames = new List<string>();
+
+            IList<Data> existingFiles = _foldersApi.GetItems(projectId, folderId);
+
+            foreach (Data file in existingFiles)
+            {
+                fileNames.Add(file.attributes.displayName);
+            }
+
+            return fileNames;
+        }
 
         public void CopyFoldersProcess()
         {
@@ -169,22 +192,39 @@ namespace BimProjectSetupCommon.Workflow
             if (!folderStructures.ContainsKey(orgProj.name))
             {
                 List<NestedFolder> existingFolderStructure = new List<NestedFolder>();
-                Log.Info($"");
-                Log.Info($"Folder structure extraction started");
-                Log.Info("- retrieving top folders from " + orgProj.id);
+
+                Util.LogInfo($"");
+                Util.LogInfo($"Folder structure extraction started");
+                Util.LogInfo("- retrieving top folders from " + orgProj.id);
+
                 // call TopFolder to get the initial folder ids to start
                 TopFolderResponse topFolderRes = GetTopFolders(orgProj.id);
 
-
-                if (topFolderRes.data == null || topFolderRes.data.Count() == 0)
+                if (!CustomRootFoldersExist(topFolderRes))
                 {
-                    Log.Warn("No top folders retrieved.");
-                    // TODO: debug!
-                    Log.Warn("Please start the program again.");
-                    return existingFolderStructure;
+                    Util.LogInfo("No top folders retrieved.");
+
+                    // Wait until new project's folders are created
+                    for(int i=0; i<6; i++)
+                    {
+                        Util.LogInfo("Waiting for project's folders to be created...");
+
+                        Thread.Sleep(5000);
+                        topFolderRes = GetTopFolders(orgProj.id);
+
+                        if (CustomRootFoldersExist(topFolderRes))
+                        {
+                            break;
+                        }
+                    }
+                    if (!CustomRootFoldersExist(topFolderRes))
+                    {
+                        Util.LogError($"There was a problem retrievieng root folders for project {orgProj.name}. The program has been stopped. Try running the program again.");
+                        throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
+                    }
                 }
 
-                Log.Info("- retrieving sub-folders for 'Plans' and 'Project Files' folder. This could take a while..");
+                Util.LogInfo("- retrieving sub-folders for 'Plans' and 'Project Files' folder. This could take a while..");
                 // Iterate root folders
                 foreach (Folder folder in topFolderRes.data)
                 {
@@ -207,7 +247,35 @@ namespace BimProjectSetupCommon.Workflow
                 throw new ApplicationException($"");
             }
         }
-        private void ExtractFolderStructure(BimProject orgProj)
+        private bool CustomRootFoldersExist(TopFolderResponse topFolderRes)
+        {
+            if (topFolderRes.data == null)
+            {
+                return false;
+            }
+            bool plansExist = false;
+            bool projectFilesExist = false;
+            for (int i = 0; i < topFolderRes.data.Length; i++)
+            {
+                if (topFolderRes.data[i].attributes.name.ToLower() == "plans")
+                {
+                    plansExist = true;
+                }
+                if (topFolderRes.data[i].attributes.name.ToLower() == "project files")
+                {
+                    projectFilesExist = true;
+                }
+            }
+            if(!plansExist || !projectFilesExist)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+            private void ExtractFolderStructure(BimProject orgProj)
         {
             if (folderStructures.ContainsKey(orgProj.name))
             {
