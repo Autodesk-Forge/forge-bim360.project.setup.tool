@@ -54,6 +54,20 @@ Command line tool to setup BIM 360 projects, services, users, it includes the fo
 - After running the programm it is still possible to add new information in the CSV-File and run the program again. Everything is checked and only the new information will be updated in BIM360.
 - Soon there will be a tutorial video with more information
 
+### Requirements on the CSV-File
+The template should be always used as reference. Here are the requirements:
+- All required columns must be presented in the CSV-File. The required columns are in the template file. The only exception are the 'level_' columns. You can have more or less than 3 levels of sub folders, which are currently defined in the template file.
+- The order of the columns must be the same as in the template file.
+- First row must be a populated row (must include a project).
+- Emty row must exist before each new project (without the first one).
+- Each project must have a project type assinged to it.
+- Each company must have a company trade assinged to it (just the first occurrence of a certain company).
+- A permission must always correspond to a user or role for a certain folder. If there is no folder the user will be added to the project and no permission is required.
+- A user or role must always correspond to a permission.
+- Only allowed values for 'root_folder' are: 'Plans' and 'Project Files'.
+
+If you didn't follow one of these rules the program will print the problem on the console and save it in the log files.
+
 # Features
 ![features](./UseCases.png)
 

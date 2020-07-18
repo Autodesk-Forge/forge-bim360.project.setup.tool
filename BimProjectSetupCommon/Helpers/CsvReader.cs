@@ -124,8 +124,9 @@ namespace BimProjectSetupCommon.Helpers
         }
         internal static void CustomCheckRequiredColumns(DataTable table)
         {
-
             Util.LogInfo("\nChecking required columns...");
+
+            bool isError = false;
 
             // Check if all required columns are existing
             if (!table.Columns.Contains("project_name") || !table.Columns.Contains("project_type") || !table.Columns.Contains("root_folder") ||
@@ -134,8 +135,7 @@ namespace BimProjectSetupCommon.Helpers
             {
                 Util.LogError($"Not all required columns are presented in the CSV-File. Required columns are: " +
                     $"'project_name', 'project_type', 'root_folder', 'permission', 'role_permission', 'user_email', 'industry_role', 'company', 'company_trade' and 'local_folder'\n");
-
-                throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
+                isError = true;
             }
 
             // Check if the order of the columns is correct and if the local_folder column is the last one
@@ -147,19 +147,27 @@ namespace BimProjectSetupCommon.Helpers
                 table.Columns.IndexOf("local_folder")  != table.Columns.Count -1)
             {
                 Util.LogError($"The columns in the CSV-File are not in the correct order or unrecognized columns exist. Please use the template!\n");
+                isError = true;
+            }
+
+            if (isError)
+            {
                 throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
             }
+
         }
         internal static void CustomCheckRequiredRows(DataTable table)
         {
 
             Util.LogInfo("Checking required rows...");
 
+            bool isError = false;
+
             // First row must be a populated row
             if (string.IsNullOrEmpty(table.Rows[0]["project_name"].ToString()))
             {
                 Util.LogError($"The first row of the CSV-File must include a project.\n");
-                throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
+                isError = true;
             }
 
             for (int i = 0; i < table.Rows.Count; i++)
@@ -172,7 +180,7 @@ namespace BimProjectSetupCommon.Helpers
                         if (!string.IsNullOrEmpty(table.Rows[i]["project_name"].ToString()) && !string.IsNullOrEmpty(table.Rows[i - 1][column].ToString()))
                         {
                             Util.LogError($"Before each new project an empty row is required in the CSV-File (not the first project). See row number {i + 2} in the CSV-File.\n");
-                            throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
+                            isError = true;
                         }
 
                     }
@@ -182,7 +190,7 @@ namespace BimProjectSetupCommon.Helpers
                 if (!string.IsNullOrEmpty(table.Rows[i]["project_name"].ToString()) && string.IsNullOrEmpty(table.Rows[i]["project_type"].ToString()))
                 {
                     Util.LogError($"Each project must have a project type assinged to it. See row number {i + 2} in the CSV-File.\n");
-                    throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
+                    isError = true;
                 }
 
                 // Check if a company_trade is always available to a company for the first row of a specific company
@@ -203,7 +211,7 @@ namespace BimProjectSetupCommon.Helpers
                     if (isFirstTimeCompany)
                     {
                         Util.LogError($"Each company must have a company trade assinged to it. See row number {i + 2} in the CSV-File.\n");
-                        throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
+                        isError = true;
                     }
                 }
 
@@ -223,7 +231,7 @@ namespace BimProjectSetupCommon.Helpers
                         Util.LogError($"A permission must always correspond to a user if at least there is root_folder. " +
                             $"Delete all folders to assign users only to a project or add permission for each user. See row number {i + 2} in the CSV-File.\n");
 
-                        throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
+                        isError = true;
                     }
                 }
 
@@ -243,13 +251,13 @@ namespace BimProjectSetupCommon.Helpers
                     if (isFolderAtRow)
                     {
                         Util.LogError($"A permission must always correspond to a user or role for a certain folder. Please use the template! See row number {i + 2} in the CSV-File.\n");
-                        throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
+                        isError = true;
                     }
 
                     if(!isFolderAtRow && !string.IsNullOrEmpty(table.Rows[i]["role_permission"].ToString()))
                     {
                         Util.LogError($"A 'role_permission' must always correspond to a folder. See row number {i + 2} in the CSV-File.\n");
-                        throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
+                        isError = true;
                     }
                 }
 
@@ -258,7 +266,7 @@ namespace BimProjectSetupCommon.Helpers
                     string.IsNullOrEmpty(table.Rows[i]["role_permission"].ToString()))
                 {
                     Util.LogError($"A user or role must always correspond to a permission. Please use the template! See row number {i + 2} in the CSV-File.\n");
-                    throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
+                    isError = true;
                 }
 
                 // Only allowed values for 'root_folder': 'Plans' and 'Project Files'
@@ -266,8 +274,13 @@ namespace BimProjectSetupCommon.Helpers
                     table.Rows[i]["root_folder"].ToString().ToLower() != "plans" && table.Rows[i]["root_folder"].ToString().ToLower() != "project files")
                 {
                     Util.LogError($"Only allowed values for 'root_folder' are: 'Plans' and 'Project Files'! See row number {i + 2} in the CSV-File.\n");
-                    throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
+                    isError = true;
                 }
+            }
+
+            if (isError)
+            {
+                throw new ApplicationException($"Stopping the program... You can see the log file for more information.");
             }
         }
         internal static DataTable ReadDataFromCSV(DataTable targetTable, string filePath)
