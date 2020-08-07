@@ -118,6 +118,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="sample\UpdateUsers.bat" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ForgeBimApi\ForgeBimApi.csproj">
