@@ -40,6 +40,10 @@ Command line tool to setup BIM 360 projects, services, users, it includes the fo
 - Connect your Forge App to a Specific BIM 360 Account, follow the [tutorial](https://forge.autodesk.com/en/docs/bim360/v1/tutorials/getting-started/get-access-to-account/)
 - Download the repository, open `BimProjectSetupTool.sln` Solution on Visual Studio. The build process should download the required packages (**Autodesk.Forge** and dependencies). Compile and build the project, run it, please check the [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for all the details about usage and preparation of csv files.
 
+### Tutorial video for Custom.bat
+
+[![Running the application](https://img.youtube.com/vi/e-XrIaqquA0/0.jpg)](https://youtu.be/e-XrIaqquA0)
+
 # Hot to use Custom.bat
 - See the steps from 'Running locally' to build the project
 - Go to **.bin/Debug/sample** folder
@@ -54,19 +58,20 @@ Command line tool to setup BIM 360 projects, services, users, it includes the fo
 # Important notes on Custom.bat
 - If you just want to add users to a project delete all the information in the columns from "root_folder" to "role_permission", but don't delete the columns.
 - After running the programm it is still possible to add new information in the CSV-File and run the program again. Everything is checked and only the new information will be updated in BIM360.
-- Soon there will be a tutorial video with more information
 
 ### Requirements on the CSV-File
-The template should be always used as reference. Here are the requirements:
+If don't use the international version of Excel, there could be a problem by exporting the Excel sheet as a CSV-File. See the template CSV-File for reference.
+
+The template should always be used as a reference. Here are the requirements:
 - All required columns must be presented in the CSV-File. The required columns are in the template file. The only exception are the 'level_' columns. You can have more or less than 3 levels of sub folders, which are currently defined in the template file.
 - The order of the columns must be the same as in the template file.
-- First row must be a populated row (must include a project).
-- Emty row must exist before each new project (without the first one).
+- The first row must be a populated row (must include a project).
+- An emty row must exist before each new project (without the first one).
 - Each project must have a project type assinged to it.
 - Each company must have a company trade assinged to it (just the first occurrence of a certain company).
 - A permission must always correspond to a user or role for a certain folder. If there is no folder the user will be added to the project and no permission is required.
 - A user or role must always correspond to a permission.
-- Only allowed values for 'root_folder' are: 'Plans' and 'Project Files'.
+- The only allowed values for 'root_folder' are: 'Plans' and 'Project Files'.
 
 If you didn't follow one of these rules the program will print the problem on the console and save it in the log files.
 
