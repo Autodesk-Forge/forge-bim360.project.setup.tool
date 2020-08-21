@@ -40,7 +40,7 @@ Command line tool to setup BIM 360 projects, services, users, it includes the fo
 - Connect your Forge App to a Specific BIM 360 Account, follow the [tutorial](https://forge.autodesk.com/en/docs/bim360/v1/tutorials/getting-started/get-access-to-account/)
 - Download the repository, open `BimProjectSetupTool.sln` Solution on Visual Studio. The build process should download the required packages (**Autodesk.Forge** and dependencies). Compile and build the project, run it, please check the [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for all the details about usage and preparation of csv files.
 
-### Tutorial video for Custom.bat
+# Tutorial video for Custom.bat
 
 [![Running the application](https://img.youtube.com/vi/e-XrIaqquA0/0.jpg)](https://youtu.be/e-XrIaqquA0)
 
@@ -60,7 +60,7 @@ Command line tool to setup BIM 360 projects, services, users, it includes the fo
 - After running the programm it is still possible to add new information in the CSV-File and run the program again. Everything is checked and only the new information will be updated in BIM360.
 
 ### Requirements on the CSV-File
-If don't use the international version of Excel, there could be a problem by exporting the Excel sheet as a CSV-File. See the template CSV-File for reference.
+If don't use the international version of Excel, there could be a problem by exporting the Excel sheet as a CSV-File.
 
 The template should always be used as a reference. Here are the requirements:
 - All required columns must be presented in the CSV-File. The required columns are in the template file. The only exception are the 'level_' columns. You can have more or less than 3 levels of sub folders, which are currently defined in the template file.
