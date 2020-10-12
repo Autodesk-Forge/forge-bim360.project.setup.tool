@@ -72,6 +72,7 @@ namespace BimProjectSetupCommon
         public bool TrialRun { get; private set; }
         public string HqAdmin { get; private set; }
         public bool CopyFolders { get; private set; }
+        public bool UpdateProjectUsers { get; private set; }
         public string AccountRegion
         {
             get
@@ -102,6 +103,7 @@ namespace BimProjectSetupCommon
             Encoding = GetEncoding("UTF-8");
             TrialRun = false;
             CopyFolders = false;
+            UpdateProjectUsers = false;
             AccountRegion = "US";
         }
 
@@ -171,6 +173,10 @@ namespace BimProjectSetupCommon
                 else if (arg.Equals("--CF", StringComparison.InvariantCultureIgnoreCase))
                 {
                     options.CopyFolders = true;
+                }
+                else if (arg.Equals("--UP", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    options.UpdateProjectUsers = true;
                 }
                 else if (arg.Equals("--AR", StringComparison.InvariantCultureIgnoreCase))
                 {

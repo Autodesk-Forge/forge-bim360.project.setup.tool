@@ -120,6 +120,37 @@ namespace Autodesk.Forge.BIM360
             return response;
         }
 
+        public IRestResponse PatchUser(string projectId, string adminUserId, string userId, ProjectUser user, string accountId = null)
+        {
+            var request = new RestRequest(Method.PATCH);
+            request.Resource = Urls["projects_projectId_user_patch"];
+            if (accountId == null)
+            {
+                request.AddParameter("AccountId", options.ForgeBimAccountId, ParameterType.UrlSegment);
+            }
+            else
+            {
+                request.AddParameter("AccountId", accountId, ParameterType.UrlSegment);
+            }
+
+            request.AddParameter("ProjectId", projectId, ParameterType.UrlSegment);
+            request.AddParameter("UserId", userId, ParameterType.UrlSegment);
+
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.NullValueHandling = NullValueHandling.Ignore;
+            user.email = null;
+            string serviceString = JsonConvert.SerializeObject(user, settings);
+            request.AddParameter("application/json", serviceString, ParameterType.RequestBody);
+
+            request.AddHeader("cache-control", "no-cache");
+            request.AddHeader("authorization", $"Bearer {Token}");
+            request.AddHeader("content-type", ContentType);
+            request.AddHeader("x-user-id", adminUserId);
+
+            IRestResponse response = ExecuteRequest(request);
+            return response;
+        }
+
 
         /// <summary>
         /// Update projects properties and services assigned to the project
