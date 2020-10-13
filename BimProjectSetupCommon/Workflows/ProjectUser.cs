@@ -98,6 +98,28 @@ namespace BimProjectSetupCommon.Workflow
             }
         }
 
+        public void UpdateProjectUsersFromCsvProcess()
+        {
+            try
+            {
+                DataController._projcetUserTable = CsvReader.ReadDataFromCSV(DataController._projcetUserTable, DataController._options.ProjectUserFilePath);
+
+                if (false == _options.TrialRun)
+                {
+                    List<ProjectUser> _projectUsers = GetUsers(DataController._projcetUserTable);
+                    PatchUser(_projectUsers);
+                }
+                else
+                {
+                    Log.Info("-Trial run (-r option is true) - no further processing");
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleError(ex);
+            }
+        }
+
         private void AddUsers(List<ProjectUser> _projectUsers)
         {
             if (_projectUsers == null || _projectUsers.Count < 1)
@@ -138,6 +160,49 @@ namespace BimProjectSetupCommon.Workflow
                     {
                         IRestResponse response = _projectsApi.PostUsersImport(project.id, hqAdmin.uid, list);
                         ProjectUserResponseHandler(response);
+                    }
+                }
+            }
+        }
+
+        private void PatchUser(List<ProjectUser> _projectUsers)
+        {
+            if (_projectUsers == null || _projectUsers.Count < 1)
+            {
+                return;
+            }
+
+            HqUser hqAdmin = new HqUser();
+            if (!CheckAdminEmail(_options.HqAdmin, out hqAdmin))
+            {
+                return;
+            }
+
+            Log.Info($"");
+            Log.Info($"Start updating users in projects");
+            var projectNames = _projectUsers.Select(u => u.project_name).Distinct();
+            foreach (string name in projectNames)
+            {
+                Log.Info($"- update users to project {name}");
+                var users = _projectUsers.Where(u => u.project_name.Equals(name));
+                if (users == null || users.Any() == false)
+                {
+                    Log.Warn($"- no valid users found for project {name} - skipping this project and continue with next");
+                    continue;
+                }
+                var project = DataController.AllProjects.FirstOrDefault(p => p.name != null && p.name.Equals(name));
+                foreach (ProjectUser projectUser in users)
+                {
+                    HqUser hqUser = new HqUser();
+                    if (CheckUserId(projectUser.email, out hqUser))
+                    {
+                        Log.Info($"- updating user {projectUser.email}");
+                        IRestResponse response = _projectsApi.PatchUser(project.id, hqAdmin.uid, hqUser.id, projectUser);
+                        ProjectUserPatchResponseHandler(response);
+                    }
+                    else
+                    {
+                        Log.Error($"User {projectUser.email} not in account. Add them to a project first.");
                     }
                 }
             }
@@ -320,6 +385,19 @@ namespace BimProjectSetupCommon.Workflow
             return true;
         }
 
+        private bool CheckUserId(string email, out HqUser HqUser)
+        {
+            HqUser = DataController.AccountUsers.FirstOrDefault(u =>
+                u.email != null && u.email.Equals(email, StringComparison.InvariantCultureIgnoreCase));
+            if (HqUser == null)
+            {
+                Log.Error($"Error initializing account user {email}");
+                return false;
+            }
+
+            return true;
+        }
+
         #region Response Handler
         internal static void ProjectUsersResponseHandler(List<IRestResponse> responses)
         {
@@ -348,6 +426,32 @@ namespace BimProjectSetupCommon.Workflow
                         if (si.status == Status.active)
                         {
                             DataController.AllProjects.FirstOrDefault(p => p.id == si.project_id).status = Status.active;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                LogResponse(response);
+            }
+        }
+        internal static void ProjectUserPatchResponseHandler(IRestResponse response)
+        {
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                ProjectUserPatchResponse r = JsonConvert.DeserializeObject<ProjectUserPatchResponse>(response.Content);
+                if (r != null)
+                {
+                    if (r.error == null)
+                    {
+                        Log.Info($"Successfully updated user: {r.email}");
+                    }
+                    else
+                    {
+                        Log.Error($"Error when updating project user");
+                        foreach (var e in r.error)
+                        {
+                            Log.Error($"code:{e.code}  message:{e.message}");
                         }
                     }
                 }

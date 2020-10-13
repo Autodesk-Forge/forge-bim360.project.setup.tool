@@ -17,6 +17,7 @@ Command line tool to setup BIM 360 projects, services, users, it includes the fo
 - Copy Projects with folders structure from a template project(supporting copy role permission)
 - Activate project services by adding project admin
 - Import users to project as admin or normal user
+- Update users project access (admin or user), company, and roles
 
 # Thumbnail
 ![thumbnail](/thumbnail.gif)
@@ -75,11 +76,19 @@ Watch the following video:
 
 [![https://youtu.be/cXnvoOS_-Wk](http://img.youtube.com/vi/cXnvoOS_-Wk/0.jpg)](https://youtu.be/cXnvoOS_-Wk "BIM 360 project setup tool - import users")
 
+## Feature 5 Update Users Project access, company or roles
+ ```powershell
+Autodesk.BimProjectSetup.exe -u ".\sample\BIM360_ProjectUser_Template.csv" -c "<YOUR-CLIENT-ID>" -s "<YOUR-CLIENT-SECRET>" -a "<ACCOUNT-ID>" -b "https://developer.api.autodesk.com" -t ";" -z "," -e "UTF-8" -d "yyyy-MM-dd" -r false -h "project.admin@company.com" --UP
+```
+Watch the following video:
+
+[![https://youtu.be/LfuuFeQXKpM](http://img.youtube.com/vi/LfuuFeQXKpM/0.jpg)](https://youtu.be/LfuuFeQXKpM "BIM 360 project setup tool - update users")
+
 Note: These template files used in the scripts are just samples which are defined in the spreadsheet structure for you to reference, all required fields must be filled in order for the tool to work properly, please refer the [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for the details.
 
 
 ## Command Line Options
-- Usage: Autodesk.BimProjectSetup.exe [-p] [-x] [-u] [-c] [-s] [-a] [-b] [-t] [-z] [-e] [-d] [-r] [-h] [--CF][--AR][–EU]
+- Usage: Autodesk.BimProjectSetup.exe [-p] [-x] [-u] [-c] [-s] [-a] [-b] [-t] [-z] [-e] [-d] [-r] [-h] [--CF][--AR][–EU] [--UP]
     - -p Path to CSV input file for project creation
     - -x Path to CSV input file for service activation
     - -u Path to CSV input file with project user information
@@ -96,6 +105,7 @@ Note: These template files used in the scripts are just samples which are define
     - --CF Copy folders
     - --AR Admin Industry Role
     - --EU Use the EU region account
+    - --UP Update Project User Access, Companies, or Roles
 
 # Packages 3rd party libraries used
 - The app use [NuGet](https://api.nuget.org/v3/index.json) to manage all the packages

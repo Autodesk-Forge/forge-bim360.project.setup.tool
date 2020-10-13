@@ -1,4 +1,9 @@
 # Change History
+## Improve Date: 2020-10-12
+- Support to update existing project users' information, includes access (admin or user), company, and roles.
+- This is contributed by Joe Fields, thanks to Joe.
+- Please check the details at PR #10 https://github.com/Autodesk-Forge/forge-bim360.project.setup.tool/pull/10.
+
 ## Fix Data: 2020-5-28
 - Fix referencing to null pointer issue.
 - Please check the details at https://github.com/Autodesk-Forge/forge-bim360.project.setup.tool/commit/32bb78f2d2d28e78b0efeaeff27d6f7f8d416183 
