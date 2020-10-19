@@ -297,14 +297,15 @@ namespace BimProjectSetupCommon.Workflow
                     if (existingRootFolder != null)
                     {
                         // Without below, access to the project is forbidden...
-                        Thread.Sleep(3000);
+                        Log.Info("- wait 30 seconds to make sure the new project is successfully setup ... ...");
+                        Thread.Sleep(30000);
 
                         // assign permission to root folder first
                         Log.Info("- assigning role permissions to root folder: " + newRootFolder.attributes.name);
                         bool res = _foldersApi.AssignPermission(newProjId, newRootFolder.id, existingRootFolder.permissions, uid);
                         if (!res)
                             Log.Warn($"Failed to assgn role permissions to root folder: {newRootFolder.attributes.name}.");
-   
+
                         Log.Info("- copying the subfolders(including folder permission of role) of root folder: " + newRootFolder.attributes.name);
                         foreach (NestedFolder childFolder in existingRootFolder.childrenFolders)
                         {
