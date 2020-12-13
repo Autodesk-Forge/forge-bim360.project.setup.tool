@@ -19,6 +19,7 @@
 using System;
 using System.Data;
 using System.Collections.Generic;
+using System.Threading;
 
 using NLog;
 using System.Linq;
@@ -403,7 +404,7 @@ namespace BimProjectSetupCommon
             }
             else return _token;
         }
-        private static List<BimProject> GetProjects()
+        private static List<BimProject> GetProjects( string sortProp = "updated_at", int limit = 100, int offset = 0)
         {
             if (_options == null)
             {
@@ -412,7 +413,7 @@ namespace BimProjectSetupCommon
 
             BimProjectsApi _projectsApi = new BimProjectsApi(GetToken, _options);
             List<BimProject> projects = new List<BimProject>();
-            _projectsApi.GetProjects(out projects);
+            _projectsApi.GetProjects(out projects, sortProp, limit, offset);
             return projects;
         }
         private static BimProject GetProject(string projId)
@@ -541,9 +542,59 @@ namespace BimProjectSetupCommon
 
             }
 
+            bool success = false;
+            BimProject newProject = null;
             IRestResponse response = _projectsApi.PostProject(project, accountId);
-            return HandleCreateProjectResponse(response, accountId, rowIndex);
+            if (response.StatusCode == System.Net.HttpStatusCode.Created)
+            {
+                newProject = JsonConvert.DeserializeObject<BimProject>(response.Content);
+                success = true;
+            }
+            // In certain case, the BIM 360 backend takes more than 10 seconds to handle the request, 
+            // this will result in 504 gateway timeout error, but the project should be already successfully 
+            // created, add this check to fix this issue.
+            if( response.StatusCode == System.Net.HttpStatusCode.GatewayTimeout )
+            {
+                Thread.Sleep(3000);
+                List<BimProject> projectList = GetProjects(@"-created_at");
+                newProject = projectList.FirstOrDefault();
+                success = newProject != null && newProject.name == project.name;
+            }
+            if( success )
+            {
+                if (_AllProjects == null)
+                {
+                    _AllProjects = GetProjects();
+                }
+
+                if (accountId == null)
+                {
+                    _AllProjects.Add(newProject);
+                }
+
+                if (rowIndex > -1)
+                {
+                    _projectTable.Rows[rowIndex]["id"] = newProject.id;
+                    _projectTable.Rows[rowIndex]["result"] = ResultCodes.ProjectCreated;
+                }
+                Log.Info($"- project {newProject.name} created with ID {newProject.id}!");
+                return newProject.id;
+            }
+            else
+            {
+                ResponseContent content = null;
+                content = JsonConvert.DeserializeObject<ResponseContent>(response.Content);
+                string msg = ((content != null && content.message != null) ? content.message : null);
+                if (rowIndex > -1)
+                {
+                    _projectTable.Rows[rowIndex]["result"] = ResultCodes.Error;
+                    _projectTable.Rows[rowIndex]["result_message"] = msg;
+                }
+                Log.Warn($"Status Code: {response.StatusCode.ToString()}\t Message: {msg}");
+                return "error";
+            }
         }
+
         public static void UpdateProject(BimProject project, int rowIndex = -1)
         {
             BimProjectsApi _projectsApi = new BimProjectsApi(GetToken, _options);
