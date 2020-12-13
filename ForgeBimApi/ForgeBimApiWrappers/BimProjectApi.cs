@@ -187,14 +187,12 @@ namespace Autodesk.Forge.BIM360
         /// </summary>
         /// <param name="result">List of all BimProject objects</param>
         /// <returns>IRestResponse that indicates the status of the call</returns>
-        public IRestResponse GetProjects(out List<BimProject> result)
+        public IRestResponse GetProjects(out List<BimProject> result, string sortProp = "updated_at", int limit = 100, int offset = 0 )
         {
-            int limit = 100 ;
             Log.Info($"Querying Projects from AccountID '{options.ForgeBimAccountId}'");
             result = new List<BimProject>();
             List<BimProject> projects;
             IRestResponse response = null;
-            int offset = 0;
             do
             {
                 projects = null;
@@ -205,8 +203,9 @@ namespace Autodesk.Forge.BIM360
                     request.Resource = Urls["projects"];
                     request.AddParameter("AccountId", options.ForgeBimAccountId, ParameterType.UrlSegment);
                     request.AddHeader("authorization", $"Bearer {Token}");
+                    request.AddParameter("sort", sortProp, ParameterType.QueryString);
                     request.AddParameter("limit", limit, ParameterType.QueryString);
-                    request.AddParameter("offset", offset, ParameterType.QueryString);                    
+                    request.AddParameter("offset", offset, ParameterType.QueryString);
 
                     response = ExecuteRequest(request);
                     
