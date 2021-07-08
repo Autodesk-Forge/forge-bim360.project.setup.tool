@@ -471,9 +471,29 @@ namespace Autodesk.Forge.BIM360
             request.AddHeader("Content-Type", "application/json");
             request.AddHeader("x-user-id", userId);
 
-            IRestResponse response = ExecuteRequest(request);
+            int retriesRemaining = 5;
+            while (retriesRemaining > 0)
+            {
+                retriesRemaining--;
+                IRestResponse response = ExecuteRequest(request);
 
-            return response.StatusCode == System.Net.HttpStatusCode.OK;
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    return true;
+                }
+                else if(retriesRemaining > 0)
+                {
+                    Log.Warn($"Failed to assgn role permissions to folder: {folderId}. Retry {retriesRemaining} more times...");
+                    
+                    Thread.Sleep(15000);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return false;
         }
 
 
