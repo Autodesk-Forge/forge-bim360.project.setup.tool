@@ -1,3 +1,7 @@
+<h1>DEPRECATED</h1>
+This repository has been deprecated and all its content was moved to the new one located here https://github.com/autodesk-platform-services/aps-bim360-project-setup
+
+
 # forge-bim360.project.setup.tool
 
 ![Platforms](https://img.shields.io/badge/platform-Windows-lightgray.svg)
